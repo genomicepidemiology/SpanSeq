@@ -1,0 +1,86 @@
+$schema: "http://json-schema.org/draft-06/schema#"
+
+description: SpanSeq pipelines file
+
+type: object
+
+pipelines:
+  split:
+    type: object
+    description: "Pipeline: Distance calculation -> ccphylo dbscan -> ccphylo_makespan"
+    function:
+      - split
+    bio_seq:
+      - nucleotides
+      - aminoacid
+    steps:
+      distance:
+        jaccard:
+          software: kma dist
+          method: kma
+          param: 64
+          run: option
+          factor_dist: 1.
+        szymkiewicz_simpson:
+          software: kma dist
+          method: kma
+          param: 2048
+          run: option
+          factor_dist: 1.
+        cosine:
+          software: kma dist
+          method: kma
+          param: 256
+          run: option
+          factor_dist: 1.
+        kmer_inv:
+          software: kma dist
+          method: kma
+          param: 32
+          run: option
+          factor_dist: 100.
+        mash:
+          software: mash
+          method: mash
+          param : null
+          run: option
+          factor_dist: 1.
+        identity:
+          software: ggearch36
+          method: ggsearch36
+          param: null
+          run: option
+          factor_dist: 1.
+      clustering:
+        dbscan:
+          software: ccphylo
+          method: dbscan
+          param: null
+          run: required
+      bin_creation:
+        makespan:
+          software: ccphylo
+          method: makespan
+          param: makespan
+          run: required
+
+  reduce:
+    type: object
+    description: "Pipeline: kma hobohm1 -> ccphylo_makespan"
+    function:
+      - split
+    bio_seq:
+      - nucleotides
+    steps:
+      distance:
+        kma index:
+          software: kma index
+          method: kma
+          param: hobohm
+          run: required
+      bin_creation:
+        makespan:
+          software: ccphylo
+          method: makespan
+          param: makespan
+          run: required

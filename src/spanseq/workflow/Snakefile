@@ -1,0 +1,45 @@
+from snakemake.utils import min_version
+
+### Set minimum snakemake version ###
+min_version("7.9.0")
+
+
+
+
+#### load rules ####
+include: "rules/common.smk"
+#### load target rules ####
+if config["general"]["outfmt"] == "merged_table":
+    rule all:
+        input:
+            "{sample}_partitions.tsv".format(sample=sample),
+            "{sample}_makespan.tsv".format(sample=sample),
+            "{sample}_makespan_stats.tsv".format(sample=sample),
+            "{sample}_clusters.tsv".format(sample=sample)
+            
+elif config["general"]["outfmt"] == "fasta_files":
+    rule all:
+        input:
+            expand("{sample}_M{bins}.fsa", sample=sample, bins=LIST_FSA),
+else:
+    rule all:
+        input:
+            "{sample}_makespan.tsv".format(sample=sample),
+            "{sample}_makespan_stats.tsv".format(sample=sample),
+            "{sample}_clusters.tsv".format(sample=sample)
+
+if config["software"]["mash"]["activate"]:
+    include: "rules/mash.smk"
+if config["software"]["kma"]["activate"]:
+    include: "rules/index.smk"
+    include: "rules/dist.smk"
+if config["software"]["dbscan"]["activate"]:
+    include: "rules/dbscan.smk"
+
+include: "rules/makespan.smk"
+include: "rules/create_fasta.smk"
+
+onsuccess:
+    if not config["general"]["keep_tmp"]:
+        shell("rm -rf {}".format(config["general"]["tmpdir"]))
+    print("Workflow finished, no error")

@@ -1,0 +1,154 @@
+$schema: "http://json-schema.org/draft-06/schema#"
+
+description: snakemake configuration file
+
+type: object
+
+properties:
+  general:
+    type: object
+    properties:
+      datadir:
+        type: string
+      basedir:
+        type: string
+      resultsdir:
+        type: string
+      outfmt:
+        type: string
+      logdir:
+        type: string
+      tmpdir:
+        type: string
+      env_file:
+        type: ["string", "null"]
+      sample:
+        type: object
+        properties:
+          data_path:
+            type: string
+          data_format:
+            type: string
+          fsa_ext:
+            type: string
+          name:
+            type: string
+          bioseq_type:
+            type: string
+        required:
+          - name
+          - bioseq_type
+          - data_path
+          - data_format
+      keep_tmp:
+        type: boolean
+    required:
+      - datadir
+      - basedir
+      - resultsdir
+      - sample
+
+  clustering:
+    type: object
+    properties:
+      activate:
+        type: boolean
+      dist_value:
+        type: ["number", "null"]
+
+      mode:
+        type: string
+      threads:
+        type: integer
+      compress_dist:
+        type: boolean
+    required:
+      - dist_value
+
+  reducing:
+    type: object
+    properties:
+      activate:
+        type: boolean
+      dist_value:
+        type: ["number", "null"]
+
+      threads:
+        type: integer
+    required:
+      - dist_value
+
+  software:
+    kma:
+      type: object
+      sequence_type:
+        - nucleotide
+      properties:
+        activate:
+          type: boolean
+        environment:
+          type: boolean
+        memory_disk:
+          type: boolean
+        temp_files:
+          type: string
+        dist:
+          type: integer
+        kmer_size:
+          type: integer
+        minimizer_size:
+          type: integer
+        prefix:
+          type: string
+        megadb:
+          type: string
+      required:
+        - activate
+
+    mash:
+      type: object
+      sequence_type:
+        - nucleotide
+        - aminoacid
+      properties:
+        activate:
+          type: boolean
+        environment:
+          type: boolean
+        kmer_size:
+          type: integer
+      required:
+        - activate
+
+    dbscan:
+      type: object
+      properties:
+        activate:
+          type: boolean
+        environment:
+          type: boolean
+        memory_disk:
+          type: boolean
+        temp_files:
+          type: string
+      required:
+        - activate
+
+    makespan:
+      type: object
+      properties:
+        activate:
+          type: boolean
+        environment:
+          type: boolean
+        machines:
+          type: integer
+        makespan_method:
+          type: string
+        weight_method:
+          type: string
+        machines:
+          type: "integer"
+      required:
+        - activate
+        - machines

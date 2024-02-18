@@ -1,0 +1,10 @@
+name: env_conda
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  kma:
+    - kma>=1.4.9
+  mash:
+    - mash==2.3

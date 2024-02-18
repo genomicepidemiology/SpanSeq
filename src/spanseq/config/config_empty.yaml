@@ -1,0 +1,71 @@
+# General config
+general:
+  resultsdir: null
+  basedir: null
+  outfmt: null
+  datadir: null
+  tmpdir: null
+  logdir: null
+  env_file: null
+  # Input data
+  sample:
+    data_path: null
+    data_format: null
+    filename: null
+    name: null
+    bioseq_type: null
+  keep_tmp: True
+
+
+# Clustering config
+clustering:
+  activate: False
+  dist_value: null
+  machines: null
+  mode: all
+  threads: 1
+  compress_dist: True
+
+reducing:
+  activate: False
+  dist_value: null
+  machines: null
+  threads: 1
+
+software:
+  kma:
+    activate: False
+    path: ""
+    extra_args_index: ""
+    memory_disk: False
+    temp_files: ""
+    kmer_size: null
+    minimizer_size: False
+    hobohm1_value: False
+    prefix: ""
+    megadb: ""
+    dist_method: null
+    extra_args_dist: ""
+
+  mash:
+    activate: False
+    path: ""
+    sketch_size: 1000
+    kmer_size: 7
+    extra_args_sketch: ""
+    extra_args_triangle: ""
+
+  dbscan:
+    activate: False
+    path: ""
+    memory_disk: False
+    temp_files: ""
+    extra_args: ""
+
+  makespan:
+    activate: False
+    path: ""
+    machines: 5
+    makespan_method: "DBF"
+    weight_method: "null"
+    extra_args: ""

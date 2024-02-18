@@ -1,0 +1,53 @@
+# General config
+
+general:
+  outdir: "/home/alfred/PhD_compute/SpanSeq/tests/output"
+  datadir: "/home/alfred/PhD_compute/SpanSeq/tests/data"
+  # Input data
+  sample:
+    filename: "aminoglycoside.fsa"
+    fsa_ext: ".fsa"
+    name: "aminoglycoside"
+    bioseq_type: "dna"
+
+
+clustering:
+  # Clustering config
+  dist_value: 0.7
+  machines: 5
+
+
+methods:
+  kma_index:
+    activate: True
+    hobohm1:
+      activate: False
+
+  mash:
+    activate: False
+    threads: 1
+
+  dist:
+    activate: True
+    memory_disk: False
+    temp_files: ""
+    threads: 1
+    method: 64
+
+  dbscan:
+    activate: True
+    memory_disk: False
+    temp_files: ""
+
+
+  cdhit:
+    activate: False
+    threads: 1
+    word_length: 5
+
+
+  makespan:
+    activate: True
+    makespan_method: "DBF"
+    weight_method: "none"
+    field_cluster: 3

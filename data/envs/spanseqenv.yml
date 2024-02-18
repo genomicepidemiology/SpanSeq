@@ -1,0 +1,15 @@
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - opencv
+  - python>=3.8, < 3.11
+  - mamba
+  - pandas>=1.2, <1.5
+  - snakemake = 7.9
+  - mash>=2.3
+  - fasta3>=36.3.8
+  - kma>=1.4.9
+  - ccphylo>=0.8.1
+  - biopython

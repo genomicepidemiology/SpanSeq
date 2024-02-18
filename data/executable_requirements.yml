@@ -1,0 +1,16 @@
+kma:
+  version: 1.4.12
+  command: "-v"
+  compare: ">="
+ccphylo:
+  version: 0.8.3
+  command: "-v"
+  compare: ">="
+ggsearch36:
+  version: 36.3.8
+  command: "-version"
+  compare: "=="
+mash:
+  version: 2.3.0
+  command: "--version"
+  compare: "=="
