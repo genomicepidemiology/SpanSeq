@@ -32,7 +32,9 @@ conda env create -n spanseq --file data/envs/spanseqenv.yml
 
 pip install -e .
 ```
-#### Use test
+### Install SpanSeq from Anaconda
+
+## Use test
 
 To test the installation, run
 
@@ -41,9 +43,6 @@ conda activate spanseq
 
 spanseq split -d 0.7 -i ./test/data/aminoglycoside.fsa -p 1 -s dna -o ./data/ -b 3
 ```
-### Install SpanSeq from Anaconda
-
-
 # Getting Started
 
 SpanSeq work with two modes: split and reduction
@@ -137,8 +136,10 @@ Distance Arguments:
 ```
 ### Approaches
 SpanSeq has three distance calculation approaches:
-- All: All the input sequences will be considered when building the distance matrix.
-- Hobohm_reduce, Hobohm_split: Previous to creating the distance matrix, a Hobohm 1 clustering[5] step is applied to the sequences, and the representatives of those clusters are used for distance calculation. When using that option, it is necessary to introduce a value for -hd/--hobohm1_distance, which should be higher than the distance for clustering later. If using hobohm_reduce, the only the representatives of the Hobohm 1 Clustering step will be reported, but if hobohm_split, the clustered sequences around representatives will be later merged with the clusters created with DBScan. This step is only available on nucleotide sequences.
+#### ALL
+All the input sequences will be considered when building the distance matrix.
+#### Hobohm_reduce, Hobohm_split
+Previous to creating the distance matrix, a Hobohm 1 clustering[5] step is applied to the sequences, and the representatives of those clusters are used for distance calculation. When using that option, it is necessary to introduce a value for -hd/--hobohm1_distance, which should be higher than the distance for clustering later. If using hobohm_reduce, the only the representatives of the Hobohm 1 Clustering step will be reported, but if hobohm_split, the clustered sequences around representatives will be later merged with the clusters created with DBScan. This step is only available on nucleotide sequences.
 
 ### Pipelines
 
