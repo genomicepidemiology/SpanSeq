@@ -4,11 +4,9 @@ SpanSeq
 Spanseq is an easy-to-use software to reduce the effect of homology in databases of biological sequences for the development of machine learning methods.
 
 
-# Getting started
+# Setup
 
-## Setup
-
-### Install Anaconda
+## Install Anaconda
 
 In order to set up SpanSeq, Anaconda is required. All the other dependencies can be installed manually or through Anaconda. SpanSeq is based on Snakemake which allows to run steps of the workflow in parallel on a cluster.
 
@@ -20,9 +18,9 @@ conda config --add channels bioconda
 conda config --add channels conda-forge
 ```
 
-### Install SpanSeq
+## Install SpanSeq
 
-#### Install SpanSeq from Bitbucket
+### Install SpanSeq from Bitbucket
 
 To run SpanSeq locally, this repository has to be cloned, a bioconda environment has to be activated and the package installed.
 
@@ -30,7 +28,7 @@ To run SpanSeq locally, this repository has to be cloned, a bioconda environment
 git clone https://bitbucket.org/genomicepidemiology/spanseq.git
 cd spanseq
 
-conda env create -n spanseq --file spanseqenv.yml
+conda env create -n spanseq --file data/envs/spanseqenv.yml
 
 pip install -e .
 ```
@@ -43,15 +41,18 @@ conda activate spanseq
 
 spanseq split -d 0.7 -i ./test/data/aminoglycoside.fsa -p 1 -s dna -o ./data/ -b 3
 ```
+### Install SpanSeq from Anaconda
 
-## SpanSeq Uses
+
+# Getting Started
 
 SpanSeq work with two modes: split and reduction
 
-### SpanSeq Split
+## SpanSeq Split
 
 SpanSeq Split divides the database of dna or protein sequences in a number of machines or bins, so the maximum homology between two sequences in different bins is never above a certain threshold.
 
+### Command Options
 ```console
 usage: SpanSeq [options] split [-h] [-i MULTIFASTA FILE] [-if FOLDER FASTA] [-ib LIST NAMES] -s {nucleotides,aminoacids} -o OUTPUT_FOLDER [-f {minimal,merged_table,fasta_files}] [-tmp TEMP_FILES] [-r]
                                [-KP KMAPATH] [-CP CCPHYLOPATH] [-MP MASHPATH] [-k KMER_SIZE] [-m MINIMIZER_SIZE] [-p PREFIX] [-ME] [-l MAX_LENGTH] -c MIN_DIST -b BINS [-mP {DBF,DFF}]
@@ -109,8 +110,7 @@ Common Distance and Partition arguments:
   Minimum distance between partitions and amount of partitions created.
 
   -c MIN_DIST, --min_dist MIN_DIST
-                        Maximum distance value between two sequences allowed to be in different bins/machines. The value must be between 0 and 1. The closer to one, the most restrictive the algorithm
-                        will be.
+                        Maximum distance value between two sequences allowed to be in different bins/machines. The value must be between 0 and 1. The closer to one, the most restrictive the algorithm will be.
   -b BINS, --bins BINS  It can be a number or a list of numbers. If it is a number, is the amount of bins/machines the data is splitted on. If a list, is the proportion of data in each bin/machine
 
 Makespan arguments:
@@ -135,10 +135,34 @@ Distance Arguments:
   -H, --memory_disk     Allocate distance matrix on the disk
 
 ```
+### Approaches
+SpanSeq has three distance calculation approaches:
+- All: All the input sequences will be considered when building the distance matrix.
+- Hobohm_reduce, Hobohm_split: Previous to creating the distance matrix, a Hobohm 1 clustering[5] step is applied to the sequences, and the representatives of those clusters are used for distance calculation. When using that option, it is necessary to introduce a value for -hd/--hobohm1_distance, which should be higher than the distance for clustering later. If using hobohm_reduce, the only the representatives of the Hobohm 1 Clustering step will be reported, but if hobohm_split, the clustered sequences around representatives will be later merged with the clusters created with DBScan. This step is only available on nucleotide sequences.
 
-### SpanSeq Reduce
+### Pipelines
+
+SpanSeq can use a personally made pipeline, but it is recommended to use one of the pre-made pipelines. Below there is a detailed descirption of them.
+
+#### Scheme 1
+
+This pipeline can work for DNA sequences. It works running the methods below in this order:
+  1.	`kma index` - Index the Fasta File with KMA[2]. If Hobohm 1 clustering is used, the step is performed while indexing.
+  2.	`kma dist` - Calculates distances between templates from kma index. The standard distance method is Jaccard distance.
+  3.	`ccphylo dbscan` - Make a DBSCAN given a set of phylip distance matrices using CCPhylo[3], returning the data in different clusters. The parameter of 'minimum neighbour' is set to 1.
+  4.	`ccphylo makespan` - Distribute clusters with different amounts of sequences in a certain amount of bins or machines, so the amount of sequences among bins/machines is as close as possible to equal.
+
+#### Scheme 2
+This pipeline can work for DNA and protein sequences. It works running the methods below in this order:
+  1.	`mash` - Calculates distances between templates from fasta file using Mash[4]. The standard distance method is Jaccard distance.
+  2.	`ccphylo dbscan` - Make a DBSCAN given a phylip distance matrix, returning the data in different clusters. The parameter of 'minimum neighbour' is set to 1.
+  3.	`ccphylo makespan` - Distribute clusters with different amounts of sequences in a certain amount of bins or machines, so the amount of sequences among bins/machines is as close as possible to equal.
+
+
+## SpanSeq Reduce (Beta)
 SpanSeq reduces the database of dna or protein sequences in a number of machines or bins, so the maximum homology between two sequences in different bins is never above a certain threshold.
 
+### Command Options
 ```console
 usage: SpanSeq [options] reduce [-h] [-i MULTIFASTA FILE] [-if FOLDER FASTA] [-ib LIST NAMES] -s {nucleotides,aminoacids} -o OUTPUT_FOLDER [-f {minimal,merged_table,fasta_files}] [-tmp TEMP_FILES] [-r]
                                 [-KP KMAPATH] [-CP CCPHYLOPATH] [-MP MASHPATH] [-k KMER_SIZE] [-m MINIMIZER_SIZE] [-p PREFIX] [-ME] [-l MAX_LENGTH] -c MIN_DIST -b BINS [-mP {DBF,DFF}]
@@ -211,21 +235,12 @@ Technical arguments:
   -n THREADS, --threads THREADS
                         Threads used by the pipeline
 ```
-## Pipelines
 
-SpanSeq can use a personally made pipeline, but it is recommended to use one of the pre-made pipelines. Below there is a detailed descirption of them.
+# References
+If using SpanSeq, please cite:
 
-### Scheme 1
-
-This pipeline can work for DNA sequences. It works running the methods below in this order:
-  1.	`kma index` - Index the Fasta File
-  2.	`kma dist` - Calculates distances between templates from kma index. The standard distance method is Jaccard distance.
-  3.	`ccphylo dbscan` - Make a DBSCAN given a set of phylip distance matrices, returning the data in different clusters. The parameter of 'minimum neighbour' is set to 1.
-  4.	`ccphylo makespan` - Distribute clusters with different amounts of sequences in a certain amount of bins or machines, so the amount of sequences among bins/machines is as close as possible to equal.
-
-### Scheme 2
-This pipeline can work for DNA and protein sequences. It works running the methods below in this order:
-  1.	`mash` - Calculates distances between templates from fasta file. The standard distance method is Jaccard distance.
-  2.	`ccphylo dbscan` - Make a DBSCAN given a phylip distance matrix, returning the data in different clusters. The parameter of 'minimum neighbour' is set to 1.
-  3.	`ccphylo makespan` - Distribute clusters with different amounts of sequences in a certain amount of bins or machines, so the amount of sequences among bins/machines is as close as possible to equal.
-
+Spanseq uses the other softwares and algorithms:
+2. Clausen, Philip TLC, Frank M. Aarestrup, and Ole Lund. "Rapid and precise alignment of raw reads against redundant databases with KMA." BMC bioinformatics 19 (2018): 1-8.
+3. Ondov, Brian D., et al. "Mash: fast genome and metagenome distance estimation using MinHash." Genome biology 17.1 (2016): 1-14.
+4. Clausen, Philip TLC. "Scaling neighbor joining to one million taxa with dynamic and heuristic neighbor joining." Bioinformatics 39.1 (2023): btac774.
+5. Hobohm, Uwe, et al. "Selection of representative protein data sets." Protein Science 1.3 (1992): 409-417.
