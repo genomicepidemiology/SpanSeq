@@ -129,8 +129,7 @@ Distance Arguments:
   -d {jaccard,szymkiewicz_simpson,cosine,kmer_inv,mash}, --distanceMethod {jaccard,szymkiewicz_simpson,cosine,kmer_inv,mash}
                         Method for calculating the distance between sequences by ccphylo
   -hd HOBOHM1_DISTANCE, --hobohm1_distance HOBOHM1_DISTANCE
-                        Distance used for hobom1 algorithm to reduce the amount of sequence to be used for distance calculation.Only for --mode 'hobohm_reduce' and 'hobohm_split'. For example, if the
-                        value is 0.6, sequences with 0.6 identical to another sequences will not be considered for distance calculation.
+                        Distance used for hobom1 algorithm to reduce the amount of sequence to be used for distance calculation.Only for --mode 'hobohm_reduce' and 'hobohm_split'. For example, if the value is 0.6, sequences with 0.6 identical to another sequences will not be considered for distance calculation. Notice that as higher this value, the most restrictive the clustering will be.
   -H, --memory_disk     Allocate distance matrix on the disk
 
 ```

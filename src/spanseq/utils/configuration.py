@@ -213,9 +213,13 @@ class Config(dict):
                                     key="memory_disk", value=memory_disk)
 
 
+        if args.hobohm1_distance is not None:
+            hobohm1_dist = 1 - float(args.hobohm1_distance)
+        else:
+            hobohm1_dist = None
         Config.set_method_subparam(configfile=self.configfile,
                                     method_configs=["kma"],
-                                    key="hobohm1_value", value=args.hobohm1_distance)
+                                    key="hobohm1_value", value=hobohm1_dist)
 
 
     def set_methods(self, scheme, args):
