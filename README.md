@@ -238,9 +238,9 @@ Technical arguments:
 
 # References
 If using SpanSeq, please cite:
-  1.	Ferrer Florensa, Alfred, et al. "SpanSeq: Similarity-based sequence data splitting method for improved development and assessment of deep learning projects." arXiv preprint arXiv:2402.14482 (2024).
+```Ferrer Florensa, Alfred, et al. "SpanSeq: Similarity-based sequence data splitting method for improved development and assessment of deep learning projects." arXiv preprint arXiv:2402.14482 (2024).```
 Spanseq uses the other softwares and algorithms:
-  2.	Clausen, Philip TLC, Frank M. Aarestrup, and Ole Lund. "Rapid and precise alignment of raw reads against redundant databases with KMA." BMC bioinformatics 19 (2018): 1-8.
-  3.	Ondov, Brian D., et al. "Mash: fast genome and metagenome distance estimation using MinHash." Genome biology 17.1 (2016): 1-14.
-  4.	Clausen, Philip TLC. "Scaling neighbor joining to one million taxa with dynamic and heuristic neighbor joining." Bioinformatics 39.1 (2023): btac774.
-  5.	Hobohm, Uwe, et al. "Selection of representative protein data sets." Protein Science 1.3 (1992): 409-417.
+  1.	Clausen, Philip TLC, Frank M. Aarestrup, and Ole Lund. "Rapid and precise alignment of raw reads against redundant databases with KMA." BMC bioinformatics 19 (2018): 1-8.
+  2.	Ondov, Brian D., et al. "Mash: fast genome and metagenome distance estimation using MinHash." Genome biology 17.1 (2016): 1-14.
+  3.	Clausen, Philip TLC. "Scaling neighbor joining to one million taxa with dynamic and heuristic neighbor joining." Bioinformatics 39.1 (2023): btac774.
+  4.	Hobohm, Uwe, et al. "Selection of representative protein data sets." Protein Science 1.3 (1992): 409-417.
