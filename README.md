@@ -41,7 +41,7 @@ To test the installation, run
 ```console
 conda activate spanseq
 
-spanseq split -d 0.7 -i ./test/data/aminoglycoside.fsa -p 1 -s dna -o ./data/ -b 3
+spanseq split -c 0.7 -i ./test/beta-lactam.fsa -s nucleotides -o ./data/ -b 3 -k 8
 ```
 # Getting Started
 
