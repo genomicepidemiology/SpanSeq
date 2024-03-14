@@ -291,6 +291,25 @@ class Config(dict):
         Config.set_method_subparam(configfile=self.configfile,
                                     method_configs=["makespan"],
                                     key="weight_method", value=w_method)
+        if args.makespanImbalanced:
+            makespan_imb = str(args.makespanImbalanced)
+        else:
+            makespan_imb = args.makespanImbalanced
+        Config.set_method_subparam(configfile=self.configfile,
+                                    method_configs=["makespan"],
+                                    key="imbalance_file", value=makespan_imb)
+        if makespan_imb:
+            with open(makespan_imb, "r") as imb_file:
+                cols_imbfile = len(imb_file.readline().strip().split("\t"))
+                if cols_imbfile == 2:
+                    imb_cols = 4
+                else:
+                    imb_cols = ", ".join(range(4, 4+cols_imbfile-1))
+        else:
+            imb_cols = makespan_imb
+        Config.set_method_subparam(configfile=self.configfile,
+                                    method_configs=["makespan"],
+                                    key="class_columns", value=imb_cols)            
         
 
     @staticmethod

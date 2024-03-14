@@ -30,6 +30,8 @@ cd spanseq
 
 conda env create -n spanseq --file data/envs/spanseqenv.yml
 
+conda activate spanseq
+
 pip install -e .
 ```
 ### Install SpanSeq from Anaconda

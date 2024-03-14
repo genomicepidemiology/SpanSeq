@@ -147,6 +147,10 @@ properties:
           type: string
         weight_method:
           type: string
+        imbalance_file:
+          type: ["boolean", "string"]
+        class_columns:
+          type: ["boolean", "string"]
         machines:
           type: "integer"
       required:

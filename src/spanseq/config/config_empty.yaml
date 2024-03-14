@@ -68,4 +68,6 @@ software:
     machines: 5
     makespan_method: "DBF"
     weight_method: "null"
+    imbalance_file: False
+    class_columns: False
     extra_args: ""

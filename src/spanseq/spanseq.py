@@ -163,6 +163,17 @@ class SpanSeq:
                             "powX:	Weigh polynomial with exponent X\n"
                             "expX:	Weigh exponential with exponential base X"),
                             default="none")
+        makespan_arg.add_argument("-mI", "--makespanImbalanced", 
+                            help=("Do makespan of the clusters also accounting for "
+                            "the class/output/prediction of the data. It is useful for "
+                            "cases where data imbalance is a concern. If used, it "
+                            "should point to a tab separated file where each row is a "
+                            "sequence, and the first column should contain the names "
+                            "of those sequences. If each sequence can only have one class, "
+                            "the next column should have the class of each sequence. If each "
+                            "sequence can have multiple classes, each column should point to "
+                            "class, and it should be marked with '1's the classes that each "
+                            "sequence belongs to."), default=False)
         ## Technical parameters for memory and speed consumption
         technical_arg = parent_parser.add_argument_group('Technical arguments')
         technical_arg.add_argument("-n", "--threads", default=1, help=("Threads used"
