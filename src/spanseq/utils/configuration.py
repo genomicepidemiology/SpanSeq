@@ -292,7 +292,7 @@ class Config(dict):
                                     method_configs=["makespan"],
                                     key="weight_method", value=w_method)
         if args.makespanImbalanced:
-            makespan_imb = str(args.makespanImbalanced)
+            makespan_imb = os.path.abspath(args.makespanImbalanced)
         else:
             makespan_imb = args.makespanImbalanced
         Config.set_method_subparam(configfile=self.configfile,
