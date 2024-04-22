@@ -27,7 +27,7 @@ def create_fastas(dataframe, fasta_file, bins, outfolder):
         for record in SeqIO.parse(fastafile, "fasta"):
             partition = dataframe.loc[dataframe["id"]==record.id]["partition"].values
             if len(partition) < 1:
-                partition = dataframe[dataframe["id"]==record.description]["partition"].values
+                partition = dataframe[dataframe["id"].str.contains(record.description)]["partition"].values
             elif len(partition) > 1:
                 partition = dataframe[dataframe["id"]==record.description]["partition"].values
 
