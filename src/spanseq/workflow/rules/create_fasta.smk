@@ -27,7 +27,7 @@ rule create_fastas:
         "benchmarks/{sample}.create_fasta.benchmark.txt"
     params:
         script = "%s/join_clusters.py" % SCRIPTFOLDER,
-        bins = config["clustering"]["machines"],
+        bins = config["software"]["makespan"]["machines"],
         outdir = config["general"]["resultsdir"]
     shell:
         "python {params.script} -d {input.df_merged} -o {params.outdir} -f {input.fasta} -b {params.bins}"
