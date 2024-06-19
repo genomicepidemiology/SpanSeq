@@ -9,6 +9,7 @@ dependencies:
   - pandas>=1.2, <1.5
   - snakemake = 7.9
   - mash>=2.3
+  - cd-hit>=4.8
   - fasta3>=36.3.8
   - kma>=1.4.9
   - ccphylo>=0.8.1

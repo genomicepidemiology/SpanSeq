@@ -23,6 +23,7 @@ clustering:
   dist_value: null
   machines: null
   mode: all
+  hobohm1_software: False
   threads: 1
   compress_dist: True
 
@@ -47,6 +48,11 @@ software:
     dist_method: null
     extra_args_dist: ""
 
+  cdhit:
+    activate: False
+    path: ""
+    hobohm1_distance: False
+
   mash:
     activate: False
     path: ""
@@ -54,6 +60,12 @@ software:
     kmer_size: 7
     extra_args_sketch: ""
     extra_args_triangle: ""
+
+  ggsearch36:
+    activate: False
+    path: ""
+    max_length: 1000
+    extra_args_aln: ""
 
   dbscan:
     activate: False

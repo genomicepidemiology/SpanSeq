@@ -26,9 +26,13 @@ def create_fastas(dataframe, fasta_file, bins, outfolder):
     with open(fasta_file, "r") as fastafile:
         for record in SeqIO.parse(fastafile, "fasta"):
             partition = dataframe.loc[dataframe["id"]==record.id]["partition"].values
+#            print(record.id, record.description, record)
             if len(partition) < 1:
-                partition = dataframe[dataframe["id"].str.contains(record.description)]["partition"].values
-            elif len(partition) > 1:
+                partition = dataframe.loc[dataframe["id"]==record.description]["partition"].values
+            if len(partition) < 1:
+
+                partition = dataframe[dataframe["id"].str.contains("{} ".format(record.description), regex=False)]["partition"].values
+            if len(partition) > 1:
                 partition = dataframe[dataframe["id"]==record.description]["partition"].values
 
             if len(partition) == 1:
@@ -41,14 +45,9 @@ def create_fastas(dataframe, fasta_file, bins, outfolder):
                 sys.exit(("The fasta header %s is found more than once in the "
                          "cluster file" % record.description))
             else:
+                print(record.id, record.description, record)
+                continue
                 sys.exit(("The fasta header %s is not found in the cluster file" % record.description))
-    #remove_chars = len(os.linesep)
-    #for i in range(1, bins+1):
-    #    out_bin = "{}_{}".format(out_name, i)
-    #    files_dict[out_bin]["exec"].truncate(
-    #                        files_dict[out_bin]["exec"].tell() - remove_chars)
-    #    files_dict[out_bin]["exec"].close()
-
 
 
 def arguments_join():

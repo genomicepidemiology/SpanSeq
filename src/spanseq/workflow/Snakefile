@@ -30,6 +30,8 @@ else:
 
 if config["software"]["mash"]["activate"]:
     include: "rules/mash.smk"
+if config["software"]["ggsearch36"]["activate"]:
+    include: "rules/alignment.smk"
 if config["software"]["kma"]["activate"]:
     include: "rules/index.smk"
     include: "rules/dist.smk"

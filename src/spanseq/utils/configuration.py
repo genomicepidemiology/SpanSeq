@@ -191,7 +191,7 @@ class Config(dict):
                 raise TypeError(
                     "The Pipeline scheme template is not formatted adequately")
         Config.set_method_subparam(configfile=self.configfile,
-                                    method_configs=["kma"],
+                                    method_configs=["kma", "cdhit"],
                                     key="hobohm1_value", value=args.min_dist)
 
 
@@ -234,7 +234,10 @@ class Config(dict):
         Config.set_method_subparam(configfile=self.configfile,
                                     method_configs=["dbscan", "kma"],
                                     key="temp_files", value=temp_files)
-        kmer_size = int(args.kmer_size)
+        if args.kmer_size:
+            kmer_size = int(args.kmer_size)
+        else:
+            kmer_size = args.kmer_size
         Config.set_method_subparam(configfile=self.configfile,
                                     method_configs=["mash", "kma"],
                                     key="kmer_size", value=kmer_size)
@@ -262,6 +265,9 @@ class Config(dict):
 
         sketch_size = Config.set_sketch_size(configfile=self.configfile,
                                              max_len=args.max_length)
+        Config.set_method_subparam(configfile=self.configfile,
+                                    method_configs=["ggsearch36"],
+                                    key="max_length", value=args.max_length)
         Config.set_method_subparam(configfile=self.configfile,
                                     method_configs=["mash"],
                                     key="sketch_size", value=sketch_size)
@@ -385,11 +391,22 @@ class Config(dict):
                     Config.assign_path(configfile=self.configfile,
                                        executable="kma", method=method,
                                        path=os.path.abspath(args.kmaPath))
+            elif method == "cdhit":
+                if args.CDHitPath:
+                    Config.assign_path(configfile=self.configfile,
+                                       executable="cdhit", method=method,
+                                       path=os.path.abspath(args.cdhitPath))
+
             elif method == "mash":
                 if args.mashPath:
                     Config.assign_path(configfile=self.configfile,
                                        executable="mash", method=method,
                                        path=os.path.abspath(args.mashPath))
+            elif method == "ggsearch36":
+                if args.GGSearchPath:
+                    Config.assign_path(configfile=self.configfile,
+                                       executable="ggsearch36", method=method,
+                                       path=os.path.abspath(args.ggsearchPath))
             elif method == "dbscan" or method == "makespan":
                 if args.ccphyloPath:
                     Config.assign_path(configfile=self.configfile,

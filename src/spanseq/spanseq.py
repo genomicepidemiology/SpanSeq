@@ -120,6 +120,16 @@ class SpanSeq:
                               " it. If used, overwrites the conda environment "
                               "that would be used instead. If used as a flag, "
                               "it will use the mash at the global path"))
+        softw_arg.add_argument("-DP", "--CDHitPath", default=False, help=("Path to"
+                              " the cdhit executable or the folder that contains"
+                              " it. If used, overwrites the conda environment "
+                              "that would be used instead. If used as a flag, "
+                              "it will use the cdhit at the global path"))
+        softw_arg.add_argument("-GP", "--GGSearchPath", default=False, help=("Path to"
+                              " the ggsearch36 executable or the folder that contains"
+                              " it. If used, overwrites the conda environment "
+                              "that would be used instead. If used as a flag, "
+                              "it will use the cdhit at the global path"))
         
         ## K-mer arguments
         kmer_arg = parent_parser.add_argument_group('Common K-mer Options',
@@ -197,15 +207,17 @@ class SpanSeq:
                             "is run. 'all' runs comparisions all vs.all, "
                             "while hobhom will run the hobhom algorithm."))
         dist_arg.add_argument("-d", "--distanceMethod",
-                              default="szymkiewicz_simpson", type=str,
+                              default="cosine", type=str,
                               choices=["jaccard", "szymkiewicz_simpson",
-                                    "cosine", "kmer_inv", "mash"],
+                                    "cosine", "kmer_inv", "mash", "identity"],
                               help=("Method for calculating the distance "
-                                    "between sequences by ccphylo"))
+                                    "between sequences by ggsearch (identity), mash (mash) or kma (the rest)"))
         dist_arg.add_argument("-hd", "--hobohm1_distance", default=False, help=( 
                             "Distance used for hobom1 algorithm to reduce the amount of sequence to be used for distance calculation."
                             "Only for --mode 'hobohm_reduce' and 'hobohm_split'. For example, if the value is 0.6, sequences with 0.6 "
                             "identical to another sequences will not be considered for distance calculation."), type=float)
+        dist_arg.add_argument("-hm", "--hobohm1_method", choices=["kma", "cdhit"],
+                            default="cdhit", help=("Software to be used for the Hobohm1 algorithm."))
         dist_arg.add_argument("-H", "--memory_disk", action="store_true",
                               help=("Allocate distance matrix on the disk"))
 

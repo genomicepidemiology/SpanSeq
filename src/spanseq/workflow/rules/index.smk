@@ -39,9 +39,9 @@ if config["clustering"]["mode"] == "hobohm_reduce" or config["reducing"]["activa
             minimizer=("{params.minimizer_size}")
             if [ "$minimizer" = False ]
             then
-                {params.kma_path}kma index {param_input} {input.in_fsa} -o {tmpdir}{sample} -k {params.kmer_size} -hq {params.hobhm_value} {params.extra_args} -Sparse - > {output.output_hobohm} 2> {log.kma}
+                {params.kma_path}kma index {param_input} {input.in_fsa} -o {tmpdir}{sample} -k {params.kmer_size} -hq {params.hobhm_value} -ht {params.hobhm_value} -and {params.extra_args} -Sparse - > {output.output_hobohm} 2> {log.kma}
             else
-                {params.kma_path}kma index {param_input} {input.in_fsa} -o {tmpdir}{sample} -k {params.kmer_size} -hq {params.hobhm_value} {params.extra_args} -m {params.minimizer_size} -Sparse - > {output.output_hobohm} 2> {log.kma}
+                {params.kma_path}kma index {param_input} {input.in_fsa} -o {tmpdir}{sample} -k {params.kmer_size} -hq {params.hobhm_value} -ht {params.hobhm_value} -and {params.extra_args} -m {params.minimizer_size} -Sparse - > {output.output_hobohm} 2> {log.kma}
             fi
             """
 else:

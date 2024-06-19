@@ -55,9 +55,10 @@ properties:
         type: boolean
       dist_value:
         type: ["number", "null"]
-
       mode:
         type: string
+      hobohm1_software:
+        type: ["string", "boolean"]
       threads:
         type: integer
       compress_dist:
@@ -116,6 +117,21 @@ properties:
         environment:
           type: boolean
         kmer_size:
+          type: integer
+        sketch_size:
+          type: integer
+      required:
+        - activate
+
+    ggsearch36:
+      type: object
+      sequence_type:
+        - nucleotide
+        - aminoacid
+      propoerties:
+        activate:
+          type: boolean
+        max_length:
           type: integer
       required:
         - activate

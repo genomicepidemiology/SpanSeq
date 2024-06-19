@@ -53,7 +53,7 @@ class GGSearch36_Aligner(_Aligners):
                                 break
                             info_aln = new_line.strip().split(" ")
                             subject = info_aln[0]
-                            id = ""
+                            id_val = ""
                             n_wscore = ""
                             pos = 0
                             for n in reversed(info_aln):
@@ -61,7 +61,7 @@ class GGSearch36_Aligner(_Aligners):
                                     continue
                                 else:
                                     if pos == 2:
-                                        id = float(n)
+                                        id_val = float(n)
                                     elif pos == 5:
                                         n_wscore = float(n)
                                     elif pos == 0:
@@ -69,8 +69,8 @@ class GGSearch36_Aligner(_Aligners):
                                     pos += 1
 
                             if subject in aln_metadata:
-                                if id > aln_metadata[subject]["identity"]:
-                                    aln_metadata[subject]["identity"] = id
+                                if id_val > aln_metadata[subject]["identity"]:
+                                    aln_metadata[subject]["identity"] = id_val
                                     if score_bool:
                                         aln_metadata[subject]["score"] = n_wscore
                                     if len_bool:
@@ -80,7 +80,7 @@ class GGSearch36_Aligner(_Aligners):
                                     continue
                             else:
                                 aln_metadata[subject] = {}
-                                aln_metadata[subject]["identity"] = id
+                                aln_metadata[subject]["identity"] = id_val
                                 if score_bool:
                                     aln_metadata[subject]["score"] = n_wscore
                                 if len_bool:
@@ -150,7 +150,7 @@ class Aligner_Wrapper:
     @staticmethod
     def write_matrix(idenmatrix_file, aln_data, seq_names, inverse=False,
                      scorematrix_file=False, lenmatrix_file=False,
-                     far_fill={"identity":-1, "score":"nan", "aln_len": "nan"}):
+                     far_fill={"identity":0, "score":"nan", "aln_len": "nan"}):
         for name in aln_data:
             seq1 = name.replace("/", "-").strip()
             idenmatrix_file.write("{}".format(seq1))
@@ -191,7 +191,7 @@ class Aligner_Wrapper:
                 lenmatrix_file.write("\n")
 
     def run_aligner(self, fasta_file, phy_iden, phy_score=False,
-                    phy_length=False, tmp_folder=None, test=False, **kwargs):
+                    phy_length=False, tmp_folder=None, test=True, **kwargs):
         if tmp_folder is None:
             tmp_folder = os.path.join(self.out_folder, "tmp_aligner")
         target_file = Aligner_Wrapper.create_targetfile(tmp_folder=tmp_folder)
@@ -250,6 +250,8 @@ class Aligner_Wrapper:
                                         lenmatrix_file=phy_length,
                                         aln_data=aln_data,
                                         seq_names=seen_sequences)
+            if len(aln_data[record.id]) != count:
+                sys.exit("Alignment unsuccessful. Please, increase the maximum length parameter")
             seen_sequences.append(writteable_record)
             if not test:
                 os.remove(fasta_tmpfile)
