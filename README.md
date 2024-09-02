@@ -55,9 +55,10 @@ SpanSeq Split divides the database of dna or protein sequences in a number of ma
 
 ### Command Options
 ```console
-usage: SpanSeq [options] split [-h] [-i MULTIFASTA FILE] [-if FOLDER FASTA] [-ib LIST NAMES] -s {nucleotides,aminoacids} -o OUTPUT_FOLDER [-f {minimal,merged_table,fasta_files}] [-tmp TEMP_FILES] [-r]
-                               [-KP KMAPATH] [-CP CCPHYLOPATH] [-MP MASHPATH] [-k KMER_SIZE] [-m MINIMIZER_SIZE] [-p PREFIX] [-ME] [-l MAX_LENGTH] -c MIN_DIST -b BINS [-mP {DBF,DFF}]
-                               [-mW {none,logX,powX,expX}] [-n THREADS] [-a {all,hobohm_reduce,hobohm_split}] [-d {jaccard,szymkiewicz_simpson,cosine,kmer_inv,mash}] [-hd HOBOHM1_DISTANCE] [-H]
+usage: SpanSeq [options] split [-h] [-i MULTIFASTA FILE] [-if FOLDER FASTA] [-ib LIST NAMES] -s {nucleotides,aminoacids} -o OUTPUT_FOLDER [-f {minimal,merged_table,fasta_files}]
+                               [-tmp TEMP_FILES] [-r] [-KP KMAPATH] [-CP CCPHYLOPATH] [-MP MASHPATH] [-DP CDHITPATH] [-GP GGSEARCHPATH] [-k KMER_SIZE] [-m MINIMIZER_SIZE] [-p PREFIX] [-ME]
+                               [-l MAX_LENGTH] -c MIN_DIST -b BINS [-mP {DBF,DFF}] [-mW {none,logX,powX,expX}] [-mI MAKESPANIMBALANCED] [-n THREADS] [-a {all,hobohm_reduce,hobohm_split}]
+                               [-d {jaccard,szymkiewicz_simpson,cosine,kmer_inv,mash,identity}] [-hd HOBOHM1_DISTANCE] [-hm {kma,cdhit}] [-H]
 
 options:
   -h, --help            show this help message and exit
@@ -72,12 +73,12 @@ Common Data Options:
   -ib LIST NAMES, --input_batch LIST NAMES
                         File with the paths to the files containing the sequences to cluster
   -s {nucleotides,aminoacids}, --seqtype {nucleotides,aminoacids}
-                        Type of sequence at the fasta file. The options are 'nucleotides' and 'aminoacid'
+                        Type of sequence at the fasta file. The options are 'nucleotides' and 'aminoacids'
   -o OUTPUT_FOLDER, --output_folder OUTPUT_FOLDER
                         Output folder for temp files and result files
   -f {minimal,merged_table,fasta_files}, --output_format {minimal,merged_table,fasta_files}
-                        Output format. 'minimal' returns the files prodcued by ccphylo to be mapped by the user (faster); 'merged_table' returns a table with the name of the sequences and its partition
-                        and cluster assigned.'fasta_files' returns the table of 'merged_table' plus fasta files per partition (slower).
+                        Output format. 'minimal' returns the files prodcued by ccphylo to be mapped by the user (faster); 'merged_table' returns a table with the name of the sequences and
+                        its partition and cluster assigned.'fasta_files' returns the table of 'merged_table' plus fasta files per partition (slower).
   -tmp TEMP_FILES, --temp_files TEMP_FILES
                         Location for temp files
   -r, --keep_tmp        Do not remove temporary files
@@ -86,13 +87,19 @@ Common Software Options:
   Options for overwriting software paths (instead of using Anaconda's installed)
 
   -KP KMAPATH, --kmaPath KMAPATH
-                        Path to the kma executable or the folder that contains it. If used, overwrites the conda environment that would be used instead. If used as a flag, it will use the kma at the
-                        global path
+                        Path to the kma executable or the folder that contains it. If used, overwrites the conda environment that would be used instead. If used as a flag, it will use the
+                        kma at the global path
   -CP CCPHYLOPATH, --ccphyloPath CCPHYLOPATH
                         Path to the ccphylo executable or the folder that contains it. If used as a flag, it will use the ccphylo at the global path
   -MP MASHPATH, --mashPath MASHPATH
-                        Path to the mash executable or the folder that contains it. If used, overwrites the conda environment that would be used instead. If used as a flag, it will use the mash at the
-                        global path
+                        Path to the mash executable or the folder that contains it. If used, overwrites the conda environment that would be used instead. If used as a flag, it will use the
+                        mash at the global path
+  -DP CDHITPATH, --CDHitPath CDHITPATH
+                        Path to the cdhit executable or the folder that contains it. If used, overwrites the conda environment that would be used instead. If used as a flag, it will use
+                        the cdhit at the global path
+  -GP GGSEARCHPATH, --GGSearchPath GGSEARCHPATH
+                        Path to the ggsearch36 executable or the folder that contains it. If used, overwrites the conda environment that would be used instead. If used as a flag, it will
+                        use the cdhit at the global path
 
 Common K-mer Options:
   Common Options for K-mer indexing for KMA or Mash
@@ -111,15 +118,22 @@ Common Distance and Partition arguments:
   Minimum distance between partitions and amount of partitions created.
 
   -c MIN_DIST, --min_dist MIN_DIST
-                        Maximum distance value between two sequences allowed to be in different bins/machines. The value must be between 0 and 1. The closer to one, the most restrictive the algorithm will be.
-  -b BINS, --bins BINS  It can be a number or a list of numbers. If it is a number, is the amount of bins/machines the data is splitted on. If a list, is the proportion of data in each bin/machine
+                        Maximum distance value between two sequences allowed to be in different bins/machines. The value must be between 0 and 1. The closer to one, the most restrictive
+                        the algorithm will be.
+  -b BINS, --bins BINS  It can be a number or a list of numbers. If it is a number, is the amount of bins/machines the data is splitted on. If a list, is the proportion of data in each
+                        bin/machine
 
 Makespan arguments:
   -mP {DBF,DFF}, --makespanProcess {DBF,DFF}
                         Method on the makespan step. The options can be DBF (Decreasing Best First/Longest Processing Time (LPT)) or DFF (Decreasing First Fit)
   -mW {none,logX,powX,expX}, --makespanWeights {none,logX,powX,expX}
-                        Weighting method on the makespan step. The options can be: none: Do not weigh clusters logX: Weigh one plus logarithmicly with base X powX: Weigh polynomial with exponent X expX:
-                        Weigh exponential with exponential base X
+                        Weighting method on the makespan step. The options can be: none: Do not weigh clusters logX: Weigh one plus logarithmicly with base X powX: Weigh polynomial with
+                        exponent X expX: Weigh exponential with exponential base X
+  -mI MAKESPANIMBALANCED, --makespanImbalanced MAKESPANIMBALANCED
+                        Do makespan of the clusters also accounting for the class/output/prediction of the data. It is useful for cases where data imbalance is a concern. If used, it
+                        should point to a tab separated file where each row is a sequence, and the first column should contain the names of those sequences. If each sequence can only have
+                        one class, the next column should have the class of each sequence. If each sequence can have multiple classes, each column should point to class, and it should be
+                        marked with '1's the classes that each sequence belongs to.
 
 Technical arguments:
   -n THREADS, --threads THREADS
@@ -128,10 +142,13 @@ Technical arguments:
 Distance Arguments:
   -a {all,hobohm_reduce,hobohm_split}, --approach {all,hobohm_reduce,hobohm_split}
                         Mode in which SpanSeq splitis run. 'all' runs comparisions all vs.all, while hobhom will run the hobhom algorithm.
-  -d {jaccard,szymkiewicz_simpson,cosine,kmer_inv,mash}, --distanceMethod {jaccard,szymkiewicz_simpson,cosine,kmer_inv,mash}
-                        Method for calculating the distance between sequences by ccphylo
+  -d {jaccard,szymkiewicz_simpson,cosine,kmer_inv,mash,identity}, --distanceMethod {jaccard,szymkiewicz_simpson,cosine,kmer_inv,mash,identity}
+                        Method for calculating the distance between sequences by ggsearch (identity), mash (mash) or kma (the rest)
   -hd HOBOHM1_DISTANCE, --hobohm1_distance HOBOHM1_DISTANCE
-                        Distance used for hobom1 algorithm to reduce the amount of sequence to be used for distance calculation.Only for --mode 'hobohm_reduce' and 'hobohm_split'. For example, if the value is 0.6, sequences with 0.6 identical to another sequences will not be considered for distance calculation. Notice that as higher this value, the most restrictive the clustering will be.
+                        Distance used for hobom1 algorithm to reduce the amount of sequence to be used for distance calculation.Only for --mode 'hobohm_reduce' and 'hobohm_split'. For
+                        example, if the value is 0.6, sequences with 0.6 identical to another sequences will not be considered for distance calculation.
+  -hm {kma,cdhit}, --hobohm1_method {kma,cdhit}
+                        Software to be used for the Hobohm1 algorithm.
   -H, --memory_disk     Allocate distance matrix on the disk
 
 ```
@@ -240,7 +257,7 @@ Technical arguments:
 
 # References
 If using SpanSeq, please cite:
-```Ferrer Florensa, Alfred, et al. "SpanSeq: Similarity-based sequence data splitting method for improved development and assessment of deep learning projects." arXiv preprint arXiv:2402.14482 (2024).```
+```Ferrer Florensa, Alfred, et al. "SpanSeq: Similarity-based sequence data splitting method for improved development and assessment of deep learning projects." NAR Genomics and Bioinformatics, Volume 6, Issue 3, September 2024. (https://doi.org/10.1093/nargab/lqae106)```
 Spanseq uses the other softwares and algorithms:
   1.	Clausen, Philip TLC, Frank M. Aarestrup, and Ole Lund. "Rapid and precise alignment of raw reads against redundant databases with KMA." BMC bioinformatics 19 (2018): 1-8.
   2.	Ondov, Brian D., et al. "Mash: fast genome and metagenome distance estimation using MinHash." Genome biology 17.1 (2016): 1-14.

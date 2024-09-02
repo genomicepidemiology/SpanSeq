@@ -278,12 +278,14 @@ class Config(dict):
                 ValueError("""The value in the list for the machines have to"""
                            """ be a list of integers""")
         else:
-            try:
+            if isinstance(args.bins, int):
                 machines = int(args.bins)
-            except ValueError:
-                raise ValueError("""The value for the machines has to be an"""
-                                 """ integer or a list of integers. {} has """
-                                 """been used""".format(args.bins))
+            else:
+                machines = str(args.bins)
+            #except ValueError:
+             #   raise ValueError("""The value for the machines has to be an"""
+              #                   """ integer or a list of integers. {} has """
+               #                  """been used""".format(args.bins))
         Config.set_method_subparam(configfile=self.configfile,
                                     method_configs=["makespan"],
                                     key="machines", value=machines)

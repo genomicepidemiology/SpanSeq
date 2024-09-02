@@ -88,7 +88,7 @@ class SpanSeq:
         data_arg.add_argument("-s", "--seqtype", type=str, required=True,
                             choices=["nucleotides", "aminoacids"], help=("Type of "
                             "sequence at the fasta file. The options are 'nucleotides'"
-                            " and 'aminoacid'"))
+                            " and 'aminoacids'"))
         data_arg.add_argument("-o", "--output_folder", required=True,
                              help=("Output folder for temp files and result "
                              "files"))

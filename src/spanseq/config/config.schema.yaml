@@ -83,7 +83,7 @@ properties:
     kma:
       type: object
       sequence_type:
-        - nucleotide
+        - nucleotides
       properties:
         activate:
           type: boolean
@@ -109,8 +109,8 @@ properties:
     mash:
       type: object
       sequence_type:
-        - nucleotide
-        - aminoacid
+        - nucleotides
+        - aminoacids
       properties:
         activate:
           type: boolean
@@ -126,8 +126,8 @@ properties:
     ggsearch36:
       type: object
       sequence_type:
-        - nucleotide
-        - aminoacid
+        - nucleotides
+        - aminoacids
       propoerties:
         activate:
           type: boolean

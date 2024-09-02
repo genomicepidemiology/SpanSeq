@@ -12,7 +12,7 @@ pipelines:
       - split
     bio_seq:
       - nucleotides
-      - aminoacid
+      - aminoacids
     steps:
       distance:
         jaccard:
