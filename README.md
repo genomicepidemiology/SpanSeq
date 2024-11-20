@@ -25,7 +25,7 @@ conda config --add channels conda-forge
 To run SpanSeq locally, this repository has to be cloned, a bioconda environment has to be activated and the package installed.
 
 ```console
-git clone https://bitbucket.org/genomicepidemiology/spanseq.git
+git clone https://github.com/genomicepidemiology/SpanSeq.git
 cd spanseq
 
 conda env create -n spanseq --file data/envs/spanseqenv.yml
