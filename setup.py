@@ -83,11 +83,11 @@ setup(
             "src/spanseq/*",
         ]
     },
-    data_files=[(".", ["README.md", "LICENSE.txt"])],
+    data_files=[(".", ["README.md", "LICENSE"])],
     include_package_data=True,
     install_requires=["pandas>=1.2, <1.5", "biopython"],
     entry_points={"console_scripts": ["spanseq = spanseq.spanseq:main"]},
     classifiers=["Topic :: Scientific/Engineering :: Bio-Informatics"],
-    packages=find_packages(include=['spanseq', 'spanseq.utils']),
+    packages=find_packages(include=['spanseq', 'spanseq.utils'], where='src'),
     package_dir={'':'src'}
 )
