@@ -26,13 +26,13 @@ To run SpanSeq locally, this repository has to be cloned, a bioconda environment
 
 ```console
 git clone https://github.com/genomicepidemiology/SpanSeq.git
-cd spanseq
+cd SpanSeq
 
 conda env create -n spanseq --file data/envs/spanseqenv.yml
 
 conda activate spanseq
 
-pip install -e .
+pip3 install -e .
 ```
 ### Install SpanSeq from Anaconda
 
