@@ -4,6 +4,8 @@ SpanSeq
 Spanseq is an easy-to-use software to reduce the effect of homology in databases of biological sequences for the development of machine learning methods.
 
 
+News: New update is coming for the end of June 2025.
+
 # Setup
 
 ## Install Anaconda
