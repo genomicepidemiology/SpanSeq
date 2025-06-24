@@ -352,8 +352,8 @@ class Config(dict):
                 if os.path.isfile(path):
                     dir_path = os.path.dirname(path)
                 else:
-                    dir_path = path + "/"
-                configfile["software"][method]["path"] = dir_path
+                    dir_path = path
+                configfile["software"][method]["path"] = dir_path + "/"
             else:
                 sys.exit("The folder {} does not exists".format(path))
         else:
@@ -362,10 +362,10 @@ class Config(dict):
                     if os.path.isfile(path):
                         dir_path = os.path.dirname(path)
                     else:
-                        dir_path = path + "/"
-                    configfile["software"][method]["path"] = dir_path
+                        dir_path = path
+                    configfile["software"][method]["path"] = dir_path + "/"
                 else:
-                    sys.exit("The folder {} does not exists".format(dir_path))
+                    sys.exit("The folder {} does not exists".format(path))
             else:
                 sp_folder = os.path.dirname(os.path.dirname(
                                                 os.path.realpath(__file__)))
