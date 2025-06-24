@@ -35,6 +35,9 @@ conda env create -n spanseq --file data/envs/spanseqenv.yml
 conda activate spanseq
 
 pip3 install -e .
+
+# On recent version of python/pip it might be required to add these additional flags
+pip3 install --no-build-isolation --config-settings editable_mode=compat -e .
 ```
 ### Install SpanSeq from Anaconda
 
@@ -147,7 +150,7 @@ Distance Arguments:
   -d {jaccard,szymkiewicz_simpson,cosine,kmer_inv,mash,identity}, --distanceMethod {jaccard,szymkiewicz_simpson,cosine,kmer_inv,mash,identity}
                         Method for calculating the distance between sequences by ggsearch (identity), mash (mash) or kma (the rest)
   -hd HOBOHM1_DISTANCE, --hobohm1_distance HOBOHM1_DISTANCE
-                        Distance used for hobom1 algorithm to reduce the amount of sequence to be used for distance calculation.Only for --mode 'hobohm_reduce' and 'hobohm_split'. For
+                        Distance used for hobom1 algorithm to reduce the amount of sequence to be used for distance calculation.Only for --approach 'hobohm_reduce' and 'hobohm_split'. For
                         example, if the value is 0.6, sequences with 0.6 identical to another sequences will not be considered for distance calculation.
   -hm {kma,cdhit}, --hobohm1_method {kma,cdhit}
                         Software to be used for the Hobohm1 algorithm.
