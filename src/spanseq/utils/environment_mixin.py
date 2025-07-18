@@ -62,7 +62,7 @@ class Environment:
         if os.path.split(conda_env)[1] not in Environment.standard_names:
             sys.exit(("SpanSeq requires that the conda environment activated"
                 " is spanseq-light (spanseqenv_light.yml) or spanseq "
-                "(spanseq.yml) not {os.path.split(conda_env)[1]}"))
+                "(spanseq.yml) not {}".format(os.path.split(conda_env)[1])))
         else:
             return conda_env
 
