@@ -4,10 +4,10 @@ import os
 import sys
 
 class CondaError(Exception):
-    """Exception raised for errors in the input salary.
+    """Exception raised when the required conda environment is not activated.
 
     Attributes:
-        salary -- input salary which caused the error
+        env -- the expected conda environment name
         message -- explanation of the error
     """
 
@@ -48,7 +48,7 @@ class Executable:
 class Environment:
 
     standard_names = ["spanseq-light", "spanseq"]
-
+    @staticmethod
     def get_envname():
 
         try:
@@ -62,9 +62,9 @@ class Environment:
         if os.path.split(conda_env)[1] not in Environment.standard_names:
             sys.exit(("SpanSeq requires that the conda environment activated"
                 " is spanseq-light (spanseqenv_light.yml) or spanseq "
-                "(spanseq.yml) not {os.path.split(conda_env)[1]}"))
+                "(spanseq.yml) not {}".format(os.path.split(conda_env)[1])))
         else:
             return conda_env
-
+    @staticmethod
     def check_version():
         subprocess.check_output(["conda", "list"])

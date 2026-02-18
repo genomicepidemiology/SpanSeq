@@ -22,11 +22,11 @@ else:
         word_size = 2
 
 
-rule kma_dist:
+rule cdhit_dist:
     input:
         in_fsa = "%s{sample}%s" % (input_folder, fsa_ext)
     output:
-        reduced_fsa = "tmp/{sample}_cdhit.fsa"
+        reduced_fsa = "tmp/{sample}_cdhit.fsa",
         reduced_cluster = "tmp/{sample}_cdhit.fsa.cltsr"
     threads:
         config["clustering"]["threads"]
@@ -44,8 +44,8 @@ rule kma_dist:
         data_type=("{params.data_type}")
         if [ "$data_type" = "nucleotides" ]
         then
-            cd-hit -i {input.in_fsa} -o {output.reduced_fsa} -n {params.wordsize} -c {params.distance_reduce}
-        else
             cd-hit-est -i {input.in_fsa} -o {output.reduced_fsa} -n {params.wordsize} -c {params.distance_reduce}
+        else
+            cd-hit -i {input.in_fsa} -o {output.reduced_fsa} -n {params.wordsize} -c {params.distance_reduce}
         fi
         """

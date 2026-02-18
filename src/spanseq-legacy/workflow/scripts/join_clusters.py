@@ -45,8 +45,6 @@ def create_fastas(dataframe, fasta_file, bins, outfolder):
                 sys.exit(("The fasta header %s is found more than once in the "
                          "cluster file" % record.description))
             else:
-                print(record.id, record.description, record)
-                continue
                 sys.exit(("The fasta header %s is not found in the cluster file" % record.description))
 
 

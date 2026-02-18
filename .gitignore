@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Testing / coverage
+.coverage
+.pytest_cache/
+htmlcov/
+
+# Snakemake
+.snakemake/
+
+# Test output
+test/results/
+
+# IDE
+.vscode/
+.idea/
+*.swp

@@ -13,7 +13,6 @@ import sys
 from spanseq.utils.file_mixin import FileValidation
 from spanseq.utils.environment_mixin import Environment
 from spanseq.utils.configuration import Config
-from spanseq.utils.pipeline_conf import Pipelines
 from spanseq import __version__
 
 # TODO: ADD clusterize          Cluster all thesequences, and distribute those clusters in the different bins/machines so there is an equal amount of clusters among machines.
@@ -47,8 +46,7 @@ class SpanSeq:
     @staticmethod
     def get_configfilePath(file, folder=""):
         if folder == "":
-            sf = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                              file_loc)
+            sf = os.path.dirname(os.path.abspath(__file__))
         else:
             sf = folder
         if not os.path.isdir("{}/config".format(sf)):
@@ -93,7 +91,7 @@ class SpanSeq:
                              help=("Output folder for temp files and result "
                              "files"))
         data_arg.add_argument("-f", "--output_format", default="minimal", type=str,
-                             help=("Output format. 'minimal' returns the files prodcued by ccphylo to be mapped by the user (faster);"
+                             help=("Output format. 'minimal' returns the files produced by ccphylo to be mapped by the user (faster);"
                              " 'merged_table' returns a table with the name of the sequences and its partition and cluster assigned."
                              "'fasta_files' returns the table of 'merged_table' plus fasta files per partition (slower)."),
                              choices=["minimal", "merged_table", "fasta_files"])
@@ -258,7 +256,7 @@ class SpanSeq:
                     env_folder=envs_folder, statsfolder=log_folder,
                     wrking_dir=args.output_folder, threads=args.threads)
         try:
-            subprocess.check_call(cmd, shell=True)
+            subprocess.run(cmd.split(), shell=False)
         except subprocess.CalledProcessError as e:
             print(e)
             exit(1)

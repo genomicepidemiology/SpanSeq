@@ -42,6 +42,7 @@ def readlines_reversed(f):
 def transform_clusterfiles(infile, outfile, fasta_file, dist):
     lines = read_file(infile)
     cluster = None
+    sample_clst = None
     n_neighbours = 0
     with open(outfile, "w") as output_f:
         descriptor = create_descr(fasta_file=fasta_file,
@@ -76,8 +77,11 @@ def transform_clusterfiles(infile, outfile, fasta_file, dist):
                         quoting=csv.QUOTE_NONE)
 
 def create_descr(fasta_file, clstr_name, dist):
-    count_seq = 'grep ">" {} | wc -l'.format(fasta_file)
-    num_seq = subprocess.check_output(count_seq, shell=True)
+    num_seq = 0
+    with open(fasta_file, 'r', encoding='utf-8', errors='ignore') as f:
+        for line in f:
+            if line.startswith('>'):
+                count += 1
     with open(clstr_name, "rb") as clstr_file:
         f_rev = readlines_reversed(clstr_file)
         for line in f_rev:

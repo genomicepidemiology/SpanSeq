@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "spanseq"
+dynamic = ["version"]
+requires-python = ">=3.10"
+dependencies = [
+    "cgecore>=3.0",
+    "pandas>=1.4",
+]
+description = "Homology-aware partitioning of biological sequence databases"
+readme = "README.md"
+license = {text = "Apache-2.0"}
+authors = [{name = "Alfred Ferrer Florensa", email = "alff@dtu.dk"}]
+classifiers = [
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Programming Language :: Python :: 3",
+]
+
+[project.urls]
+Repository = "https://github.com/genomicepidemiology/SpanSeq"
+
+[project.scripts]
+spanseq = "spanseq.cli:main"
+
+[project.optional-dependencies]
+test = [
+    "pytest>=7",
+    "pytest-mock>=3.12",
+]
+
+[tool.setuptools.dynamic]
+version = {attr = "spanseq.__version__"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

@@ -1,8 +1,8 @@
 import yaml
 import os
 import sys
-import warnings
 from .file_mixin import FileValidation
+from .environment_mixin import Executable
 from .pipeline_conf import Pipelines
 
 
@@ -25,7 +25,7 @@ class Config(dict):
         env_file = "{}/config/env_empty.yaml".format(prev_dir)
         env_file = FileValidation.is_valid_file(file=env_file)
         with open(env_file) as file:
-            environment = yaml.full_load(file)
+            environment = yaml.safe_load(file)
             return environment
 
     @staticmethod
@@ -34,7 +34,7 @@ class Config(dict):
         config_file = "{}/config/config_empty.yaml".format(prev_dir)
         conf_file = FileValidation.is_valid_file(file=config_file)
         with open(conf_file) as file:
-            configuration = yaml.full_load(file)
+            configuration = yaml.safe_load(file)
             return configuration
 
     def __setitem__(self, i, y):
@@ -49,15 +49,15 @@ class Config(dict):
                            """ 'general', 'clustering' and 'methods'""".format(
                            i))
 
-    def __getitem__(self, y):
+    def __getitem__(self, i):
         if i == "general":
             value = self.general_params
         elif i == "clustering":
             value = self.clustering_params
         elif i == "software":
-            value = self.clustering_params
+            value = self.software_params
         else:
-            raise KeyError("""The key {} is invaldi. Only keys accepted are"""
+            raise KeyError("""The key {} is invalid. Only keys accepted are"""
                            """ 'general', 'clustering' and 'methods'""".format(
                            i))
         return value
@@ -275,7 +275,7 @@ class Config(dict):
             try:
                 machines = [int(x) for x in args.bins]
             except:
-                ValueError("""The value in the list for the machines have to"""
+                raise ValueError("""The value in the list for the machines have to"""
                            """ be a list of integers""")
         else:
             if isinstance(args.bins, int):
@@ -312,7 +312,7 @@ class Config(dict):
                 if cols_imbfile == 2:
                     imb_cols = 4
                 else:
-                    imb_cols = ", ".join(range(4, 4+cols_imbfile-1))
+                    imb_cols = ", ".join(str(x) for x in range(4, 4+cols_imbfile-1))
         else:
             imb_cols = makespan_imb
         Config.set_method_subparam(configfile=self.configfile,
@@ -397,7 +397,7 @@ class Config(dict):
                 if args.CDHitPath:
                     Config.assign_path(configfile=self.configfile,
                                        executable="cdhit", method=method,
-                                       path=os.path.abspath(args.cdhitPath))
+                                       path=os.path.abspath(args.CDHitPath))
 
             elif method == "mash":
                 if args.mashPath:
@@ -408,7 +408,7 @@ class Config(dict):
                 if args.GGSearchPath:
                     Config.assign_path(configfile=self.configfile,
                                        executable="ggsearch36", method=method,
-                                       path=os.path.abspath(args.ggsearchPath))
+                                       path=os.path.abspath(args.GGSearchPath))
             elif method == "dbscan" or method == "makespan":
                 if args.ccphyloPath:
                     Config.assign_path(configfile=self.configfile,

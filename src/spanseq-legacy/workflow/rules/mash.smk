@@ -34,12 +34,13 @@ rule mash_dist:
         then
             {params.mash_path}mash triangle {param_input} {input.in_fsa} \
             -k {params.kmer_size} -s {params.sketch_size} -i  \
-            -p {threads} {params.extra_args_sketch} > {output.dist} \
-            {params.extra_args_triangle}
+            -p {threads} {params.extra_args_sketch} {params.extra_args_triangle} \
+            > {output.dist}
+            
         else
             {params.mash_path}mash triangle {param_input} {input.in_fsa} \
             -k {params.kmer_size} -s {params.sketch_size} -i -a \
-            -p {threads} {params.extra_args_sketch} > {output.dist}\
-             {params.extra_args_triangle}
+            -p {threads} {params.extra_args_sketch} {params.extra_args_triangle} \
+            > {output.dist}
         fi
         """

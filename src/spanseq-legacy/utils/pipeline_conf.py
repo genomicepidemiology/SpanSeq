@@ -16,7 +16,7 @@ class Pipelines:
     def load_pipeline_config(pipeline_config):
         pipe_conf_file = FileValidation.is_valid_file(file=pipeline_config)
         with open(pipe_conf_file) as file:
-            pipelines = yaml.full_load(file)
+            pipelines = yaml.safe_load(file)
             return pipelines
 
     @staticmethod
@@ -33,6 +33,7 @@ class Pipelines:
     def check_bioseq(scheme, bioseq):
         if bioseq not in scheme["bio_seq"]:
             possible_schemes = []
+            config_file = Pipelines.get_pipelines_schemes()
             pipeline_config = Pipelines.load_pipeline_config(config_file)
             for sch in pipeline_config["schemes"]:
                 if bioseq in pipeline_config["schemes"][sch]["bioseq_type"]:
@@ -40,6 +41,6 @@ class Pipelines:
                                     pipeline_config["schemes"][sch]["number"])
             raise TypeError("""The scheme {} cannot be used with sequences """
                             """made of {}. Only the schemes {} can be """
-                            """selected.""".format(scheme["number"],
+                            """selected.""".format(scheme["number"], bioseq,
                                                   ", ".join(possible_schemes)))
 

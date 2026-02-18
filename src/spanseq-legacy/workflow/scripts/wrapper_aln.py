@@ -34,10 +34,9 @@ class GGSearch36_Aligner(_Aligners):
                         loc_ggsearch=loc_ggsearch, input=input, target=target,
                         outfile=outfile, max_len=max_len, seq_str=seq_str,
                         cores=cores, evalue=evalue))
-        run = subprocess.Popen(command, stdout=subprocess.PIPE,
-                               stderr=subprocess.PIPE, shell=True)
+        run = subprocess.run(command.split(), stdout=subprocess.PIPE,
+                               stderr=subprocess.PIPE, shell=False)
         stdout, stderr = run.communicate()
-        p_status = run.wait()
 
     @staticmethod
     def read_ggsearchfile(ggsearch_file, score_bool=False, len_bool=False):
@@ -92,9 +91,8 @@ class GGSearch36_Aligner(_Aligners):
 
 class Aligner_Wrapper:
 
-    # TODO: Seq name longer than 30 charac in emboss
 
-    aligners_avail = ["ggsearch36", "emboss"]
+    aligners_avail = ["ggsearch36"]
     seqtypes_avail = ["nucleotides", "aminoacids"]
 
     def __init__(self, aligner, out_folder, seq_type, loc_aligner=""):
@@ -105,7 +103,7 @@ class Aligner_Wrapper:
             raise ValueError("The aligner {} is not available in SpanSeq. The \
                               current available aligners are: {}".format(
                               aligner, ", ".join(
-                              Aligner_Wrapper.aligners_avial)))
+                              Aligner_Wrapper.aligners_avail)))
         if seq_type in Aligner_Wrapper.seqtypes_avail:
             self.seq_type = seq_type
         else:
@@ -122,10 +120,9 @@ class Aligner_Wrapper:
     @staticmethod
     def concatenate_files(target_file, input_file):
         command = 'cat "{}" >> {}'.format(input_file, target_file)
-        run = subprocess.Popen(command, stdout=subprocess.PIPE,
-                               stderr=subprocess.PIPE, shell=True)
+        run = subprocess.run(command.split(), stdout=subprocess.PIPE,
+                               stderr=subprocess.PIPE, shell=False)
         stdout, stderr = run.communicate()
-        p_status = run.wait()
 
     @staticmethod
     def create_targetfile(tmp_folder):
@@ -224,15 +221,7 @@ class Aligner_Wrapper:
             result_file = os.path.relpath("{}/{}.{}".format(
                                 self.results_folder, writteable_record,
                                 self.aligner))
-
-            if self.aligner == "emboss":
-                Emboss_Aligner.run_emboss(input=fasta_tmpfile,
-                                target=target_file, outfile=result_file,
-                                seq_type=self.seq_type,
-                                loc_emboss=self.location_aln)
-                aln_data = Emboss_Aligner.read_embossfile(
-                                                emboss_file=result_file)
-            elif self.aligner == "ggsearch36":
+            if self.aligner == "ggsearch36":
                 GGSearch36_Aligner.run_ggsearch(input=fasta_tmpfile,
                             target=target_file, outfile=result_file,
                             seq_type=self.seq_type,
@@ -278,7 +267,7 @@ class Aligner_Wrapper:
         parser = argparse.ArgumentParser()
         parser.add_argument("-a", "--aligner", required=True,
                             help="Aligner software used",
-                            choices={"emboss", "ggsearch36"})
+                            choices={"ggsearch36"})
         parser.add_argument("-o", "--output_folder", required=True,
                             help="Output folder")
         parser.add_argument("-t", "--tmp_folder", help="Temporary folder")
@@ -348,20 +337,7 @@ class Aligner_Wrapper:
 
         config_aligner["loc_aligner"] = args.aligner_loc
 
-        if args.aligner == "emboss":
-            config_aligner["aligner"] = "emboss"
-            config_aligner["params"] = {}
-
-            if args.max_len is not None:
-                raise ValueError("The option -m/--max_len is only available "
-                                 "for ggsearch36")
-            if args.cores is not None:
-                raise ValueError("The option -p/--cores is only available "
-                                 "for ggsearch36")
-            if args.evalue is not None:
-                raise ValueError("The option -e/--evalue is only available "
-                                 "for ggsearch36")
-        elif args.aligner == "ggsearch36":
+        if args.aligner == "ggsearch36":
             config_aligner["aligner"] = "ggsearch36"
             config_aligner["params"] = {}
             if args.max_len is None:
@@ -389,12 +365,7 @@ if __name__ == '__main__':
                                   out_folder=config_aligner["output_folder"],
                                   seq_type=config_aligner["seq_type"],
                                   loc_aligner=config_aligner["loc_aligner"])
-    if config_aligner["aligner"] == "emboss":
-        aligner_run.run_aligner(fasta_file=config_aligner["input_file"],
-                                phy_iden=config_aligner["matrix_iden"],
-                                phy_score=config_aligner["matrix_score"],
-                                tmp_folder=config_aligner["tmp_folder"])
-    elif config_aligner["aligner"] == "ggsearch36":
+    if config_aligner["aligner"] == "ggsearch36":
         aligner_run.run_aligner(fasta_file=config_aligner["input_file"],
                                 phy_iden=config_aligner["matrix_iden"],
                                 phy_score=config_aligner["matrix_score"],
