@@ -1,6 +1,6 @@
-"""Tests for CCPhyloDbscanApp and CCPhyloMakespanApp."""
+"""Tests for CCPhyloDbscanApp, CCPhyloMakespanApp, and CCPhyloTreeApp."""
 from pathlib import Path
-from spanseq.applications.ccphylo import CCPhyloDbscanApp, CCPhyloMakespanApp
+from spanseq.applications.ccphylo import CCPhyloDbscanApp, CCPhyloMakespanApp, CCPhyloTreeApp
 
 
 class TestDbscanApp:
@@ -131,4 +131,60 @@ class TestMakespanApp:
 
     def test_map_outputs_none(self, fake_exec):
         app = CCPhyloMakespanApp(exec_path=fake_exec)
+        assert app.map_outputs(workdir=Path("/tmp"), out_prefix=None) == {}
+
+
+class TestTreeApp:
+    def test_basic_command(self, fake_exec):
+        app = CCPhyloTreeApp(exec_path=fake_exec)
+        cmd = app.build_command(
+            input_file="/tmp/dist.phy",
+            output_file="/tmp/tree.nwk",
+        )
+        assert cmd[0] == str(fake_exec)
+        assert "tree" in cmd
+        idx = cmd.index("-m")
+        assert cmd[idx + 1] == "dnj"
+        idx = cmd.index("-t")
+        assert cmd[idx + 1] == "1"
+
+    def test_method_and_threads(self, fake_exec):
+        app = CCPhyloTreeApp(exec_path=fake_exec)
+        cmd = app.build_command(
+            input_file="/tmp/dist.phy",
+            output_file="/tmp/tree.nwk",
+            method="nj",
+            threads=8,
+        )
+        idx = cmd.index("-m")
+        assert cmd[idx + 1] == "nj"
+        idx = cmd.index("-t")
+        assert cmd[idx + 1] == "8"
+
+    def test_memory_disk(self, fake_exec):
+        app = CCPhyloTreeApp(exec_path=fake_exec)
+        cmd = app.build_command(
+            input_file="/tmp/dist.phy",
+            output_file="/tmp/tree.nwk",
+            memory_disk=True,
+        )
+        assert "-H" in cmd
+
+    def test_tmp_dir(self, fake_exec):
+        app = CCPhyloTreeApp(exec_path=fake_exec)
+        cmd = app.build_command(
+            input_file="/tmp/dist.phy",
+            output_file="/tmp/tree.nwk",
+            tmp_dir="/scratch",
+        )
+        assert "-T" in cmd
+        assert "/scratch" in cmd
+
+    def test_map_outputs(self, fake_exec):
+        app = CCPhyloTreeApp(exec_path=fake_exec)
+        outputs = app.map_outputs(workdir=Path("/tmp"), out_prefix="/tmp/out")
+        assert outputs["tree"] == Path("/tmp/out.nwk")
+
+    def test_map_outputs_none(self, fake_exec):
+        app = CCPhyloTreeApp(exec_path=fake_exec)
         assert app.map_outputs(workdir=Path("/tmp"), out_prefix=None) == {}

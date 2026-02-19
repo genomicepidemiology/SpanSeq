@@ -12,7 +12,7 @@ from spanseq.output import OutputMixin
 from spanseq.applications.kma import KmaIndexApp, KmaDistApp
 from spanseq.applications.mash import MashApp
 from spanseq.applications.cdhit import CdHitApp
-from spanseq.applications.ccphylo import CCPhyloDbscanApp, CCPhyloMakespanApp
+from spanseq.applications.ccphylo import CCPhyloDbscanApp, CCPhyloMakespanApp, CCPhyloTreeApp
 from spanseq.applications.ggsearch import GGSearchApp
 from spanseq.applications.mmseqs2 import MMseqs2SearchApp, MMseqs2ClusterApp
 
@@ -69,10 +69,12 @@ class SpanSeqPipeline(DistanceMixin, OutputMixin):
         """Initialize application runners based on config."""
         cfg = self.config
 
-        # Always need ccphylo for dbscan + makespan
+        # Always need ccphylo for dbscan + makespan (+ tree if requested)
         ccphylo = self._resolve_tool(cfg.ccphylo_path, "ccphylo")
         self.dbscan = CCPhyloDbscanApp(exec_path=ccphylo)
         self.makespan = CCPhyloMakespanApp(exec_path=ccphylo)
+        if cfg.tree:
+            self.tree_app = CCPhyloTreeApp(exec_path=ccphylo)
 
         # Distance tool
         if cfg.action == "split":
@@ -162,6 +164,20 @@ class SpanSeqPipeline(DistanceMixin, OutputMixin):
             )
             logger.info("Distance matrix: %s", dist_file)
 
+            # (Optional) Build tree from distance matrix
+            if cfg.tree:
+                tree_file = cfg.results_dir / f"{sample}.nwk"
+                tree_cmd = self.tree_app.build_command(
+                    input_file=dist_file,
+                    output_file=tree_file,
+                    method=cfg.tree_method,
+                    threads=cfg.threads,
+                    memory_disk=cfg.memory_disk,
+                    tmp_dir=cfg.tmp_dir,
+                )
+                self.tree_app.run(cmd=tree_cmd, workdir=cfg.results_dir)
+                logger.info("Tree: %s", tree_file)
+
             dbscan_cmd = self.dbscan.build_command(
                 input_file=dist_file,
                 output_file=clusters_file,
@@ -201,6 +217,9 @@ class SpanSeqPipeline(DistanceMixin, OutputMixin):
             "makespan": makespan_file,
             "stats": stats_file,
         }
+
+        if cfg.tree:
+            outputs["tree"] = tree_file
 
         # Step 5 (optional): Output formatting
         if cfg.output_format in ("merged_table", "fasta_files"):

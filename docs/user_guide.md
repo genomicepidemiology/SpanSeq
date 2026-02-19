@@ -683,7 +683,38 @@ spanseq reduce \
   -b 3
 ```
 
-### 10. Custom tool paths
+### 10. Build a phylogenetic tree
+
+Generate a Newick tree from the distance matrix alongside the partitioning:
+
+```bash
+spanseq split \
+  -i sequences.fsa \
+  -s nucleotides \
+  -o results/ \
+  -c 0.3 \
+  -b 3 \
+  --tree
+```
+
+This produces a `sequences.nwk` file in the output directory using the default
+dynamic neighbor-joining (`dnj`) method. You can choose a different algorithm:
+
+```bash
+spanseq split \
+  -i sequences.fsa \
+  -s nucleotides \
+  -o results/ \
+  -c 0.3 \
+  -b 3 \
+  --tree --tree_method nj
+```
+
+Available methods: `dnj` (dynamic neighbor-joining, default), `nj` (neighbor-joining), `upgma`.
+
+> **Note:** `--tree` requires a distance matrix, so it cannot be used with `-d mmseqs-fast`.
+
+### 11. Custom tool paths
 
 If the external tools are not in your PATH, specify their locations explicitly:
 
@@ -782,6 +813,8 @@ These options are only available with `spanseq split`:
 | `-hd`, `--hobohm1_distance FLOAT` | — | Identity threshold for Hobohm1 pre-reduction. Should be stricter than `-c` |
 | `-hm`, `--hobohm1_method` | `cdhit` | Tool for Hobohm1 reduction: `cdhit` or `kma` |
 | `-H`, `--memory_disk` | off | Allocate distance matrix on disk instead of RAM (for very large datasets) |
+| `--tree` | off | Build a Newick tree from the distance matrix. Incompatible with `-d mmseqs-fast` |
+| `--tree_method` | `dnj` | Tree construction method: `dnj` (dynamic neighbor joining), `nj` (neighbor joining), or `upgma` |
 
 ## Troubleshooting
 

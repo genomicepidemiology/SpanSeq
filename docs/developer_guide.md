@@ -23,7 +23,7 @@ Pipeline (pipeline.py)      ← orchestration: init, run_split, run_reduce
         ├── kma.py           ← KmaIndexApp, KmaDistApp
         ├── mash.py          ← MashApp
         ├── cdhit.py         ← CdHitApp
-        ├── ccphylo.py       ← CCPhyloDbscanApp, CCPhyloMakespanApp
+        ├── ccphylo.py       ← CCPhyloDbscanApp, CCPhyloMakespanApp, CCPhyloTreeApp
         ├── ggsearch.py      ← GGSearchApp
         └── mmseqs2.py       ← MMseqs2SearchApp
 ```
@@ -57,7 +57,7 @@ def write_fasta(handle, record: FastaRecord) -> None
 
 | Property | Returns |
 |---|---|
-| `distance_tool` | `"kma"`, `"mash"`, `"ggsearch36"`, or `"mmseqs2"` based on `distance_method` |
+| `distance_tool` | `"kma"`, `"mash"`, `"ggsearch36"`, `"mmseqs2"`, or `"mmseqs-fast"` based on `distance_method` |
 | `kma_dist_flag` | Integer flag for KMA dist (64, 256, 2048, 32) or `None` |
 | `effective_dist_value` | `min_dist / kma_dist_factor` |
 | `needs_hobohm` | `True` if approach is `hobohm_reduce` or `hobohm_split` |
@@ -69,7 +69,8 @@ The `DISTANCE_TOOLS` dict maps CLI distance method names to tool names:
 DISTANCE_TOOLS = {
     "jaccard": "kma", "szymkiewicz_simpson": "kma",
     "cosine": "kma", "kmer_inv": "kma",
-    "mash": "mash", "identity": "ggsearch36", "mmseqs2": "mmseqs2",
+    "mash": "mash", "identity": "ggsearch36",
+    "mmseqs2": "mmseqs2", "mmseqs-fast": "mmseqs-fast",
 }
 ```
 
@@ -81,7 +82,7 @@ DISTANCE_TOOLS = {
 |---|---|
 | `__init__(config)` | Sets up directories, resolves tool paths, initializes app runners |
 | `run()` | Dispatches to `_run_split()` or `_run_reduce()` |
-| `_run_split()` | Full split pipeline: hobohm1 → distance → dbscan → makespan → output |
+| `_run_split()` | Full split pipeline: hobohm1 → distance → (tree) → dbscan → makespan → output |
 | `_run_reduce()` | Reduce pipeline: KMA index+hobohm1 → makespan |
 
 ### `output.py`
@@ -120,6 +121,7 @@ Each application module wraps an external tool:
 | `cdhit.py` | `CdHitApp` | `ApplicationRunner` | CD-HIT clustering |
 | `ccphylo.py` | `CCPhyloDbscanApp` | `ApplicationRunner` | CCPhylo DBSCAN |
 | `ccphylo.py` | `CCPhyloMakespanApp` | `ApplicationRunner` | CCPhylo makespan |
+| `ccphylo.py` | `CCPhyloTreeApp` | `ApplicationRunner` | CCPhylo tree (Newick from distance matrix) |
 | `ggsearch.py` | `GGSearchApp` | `AlignerRunner` | GGSearch36 global alignment |
 | `mmseqs2.py` | `MMseqs2SearchApp` | `AlignerRunner` | MMseqs2 easy-search |
 | `mmseqs2.py` | `MMseqs2ClusterApp` | `ApplicationRunner` | MMseqs2 easy-cluster |

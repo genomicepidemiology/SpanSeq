@@ -135,6 +135,10 @@ class TestInitApps:
         pipeline = _make_pipeline(tmp_path, mocker, distance_method="mmseqs-fast")
         assert hasattr(pipeline, "mmseqs2_cluster")
 
+    def test_init_split_tree(self, tmp_path, mocker):
+        pipeline = _make_pipeline(tmp_path, mocker, tree=True)
+        assert hasattr(pipeline, "tree_app")
+
     def test_init_split_hobohm_cdhit(self, tmp_path, mocker):
         pipeline = _make_pipeline(
             tmp_path, mocker,
@@ -392,6 +396,34 @@ class TestRunSplit:
         mock_rmtree = mocker.patch("shutil.rmtree")
         pipeline.run()
         mock_rmtree.assert_called_once()
+
+    def test_split_with_tree(self, tmp_path, mocker):
+        """Split with --tree builds a Newick tree from the distance matrix."""
+        pipeline = _make_pipeline(tmp_path, mocker, tree=True, tree_method="nj")
+        cfg = pipeline.config
+
+        mocker.patch.object(
+            pipeline, "_compute_distance",
+            side_effect=lambda input_file, output_file: (output_file.parent.mkdir(parents=True, exist_ok=True), output_file.write_text("matrix"), output_file)[-1],
+        )
+
+        def fake_dbscan_run(cmd, workdir, **kw):
+            clusters = cfg.results_dir / f"{cfg.sample_name}_clusters.tsv"
+            clusters.write_text("#Sample\tCluster\ns1\t1\ns2\t1\n")
+        mocker.patch.object(pipeline.dbscan, "run", side_effect=fake_dbscan_run)
+
+        mock_tree_run = mocker.patch.object(pipeline.tree_app, "run")
+
+        def fake_makespan(**kw):
+            out = Path(kw["output_file"])
+            out.write_text("#Sample\tPartition\ns1\t1\ns2\t2\n")
+            return Path(kw["stats_file"])
+        mocker.patch.object(pipeline.makespan, "run_makespan", side_effect=fake_makespan)
+
+        outputs = pipeline.run()
+        mock_tree_run.assert_called_once()
+        assert "tree" in outputs
+        assert str(outputs["tree"]).endswith(".nwk")
 
     def test_split_mmseqs_fast(self, tmp_path, mocker):
         """mmseqs-fast skips distance+dbscan, calls _cluster_mmseqs2_fast."""

@@ -192,3 +192,39 @@ class TestFromArgs:
         args = self._make_args(input_fasta=None, input_folder=None, input_batch=None)
         with pytest.raises(ValueError, match="No input"):
             SpanSeqConfig.from_args(args)
+
+
+class TestTreeValidation:
+    def test_tree_with_mmseqs_fast_raises(self, tmp_path):
+        fasta = tmp_path / "input.fsa"
+        fasta.write_text(">s1\nATCG\n")
+        with pytest.raises(ValueError, match="mmseqs-fast"):
+            SpanSeqConfig(
+                action="split",
+                input_path=fasta,
+                input_format="file",
+                seq_type="nucleotides",
+                output_dir=tmp_path / "out",
+                distance_method="mmseqs-fast",
+                min_dist=0.3,
+                bins=3,
+                tree=True,
+            )
+
+    def test_tree_with_cosine_ok(self, tmp_path):
+        fasta = tmp_path / "input.fsa"
+        fasta.write_text(">s1\nATCG\n")
+        cfg = SpanSeqConfig(
+            action="split",
+            input_path=fasta,
+            input_format="file",
+            seq_type="nucleotides",
+            output_dir=tmp_path / "out",
+            distance_method="cosine",
+            min_dist=0.3,
+            bins=3,
+            tree=True,
+            tree_method="nj",
+        )
+        assert cfg.tree is True
+        assert cfg.tree_method == "nj"

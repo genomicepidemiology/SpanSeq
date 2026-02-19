@@ -1,4 +1,4 @@
-"""CCPhylo application runners for clustering (dbscan) and partitioning (makespan)."""
+"""CCPhylo application runners for clustering (dbscan), partitioning (makespan), and tree building."""
 from __future__ import annotations
 from pathlib import Path
 from typing import Dict, Optional, List, Any
@@ -168,3 +168,59 @@ class CCPhyloMakespanApp(ApplicationRunner):
             "makespan": Path(str(out_prefix) + "_makespan.tsv"),
             "stats": Path(str(out_prefix) + "_makespan_stats.tsv"),
         }
+
+
+class CCPhyloTreeApp(ApplicationRunner):
+    """Runner for `ccphylo tree` — build a Newick tree from a distance matrix."""
+
+    def __init__(self, exec_path: Path | str = "ccphylo") -> None:
+        super().__init__(exec_path=Path(exec_path), tool_name="ccphylo")
+
+    def build_command(
+        self,
+        *,
+        input_file: Path | str,
+        output_file: Path | str,
+        method: str = "dnj",
+        threads: int = 1,
+        memory_disk: bool = False,
+        tmp_dir: Optional[Path | str] = None,
+        **kwargs: Any,
+    ) -> List[str]:
+        """Build `ccphylo tree` command.
+
+        Args:
+            input_file: Distance matrix (.phy).
+            output_file: Output Newick tree file.
+            method: Tree construction method (-m): "dnj", "nj", "upgma", etc.
+            threads: Number of threads (-t).
+            memory_disk: Allocate distance matrix on disk (-H).
+            tmp_dir: Temporary directory (-T).
+        """
+        cmd = [
+            str(self.exec_path), "tree",
+            "-i", str(input_file),
+            "-o", str(output_file),
+            "-m", method,
+            "-t", str(threads),
+        ]
+
+        if memory_disk:
+            cmd.append("-H")
+
+        if tmp_dir is not None:
+            cmd += ["-T", str(tmp_dir)]
+
+        return cmd
+
+    def map_outputs(
+        self,
+        workdir: Path,
+        *,
+        out_prefix: Optional[str] = None,
+        app_args: Optional[Dict[str, Any]] = None,
+        **kwargs: Any,
+    ) -> Dict[str, Path]:
+        if out_prefix is None:
+            return {}
+        return {"tree": Path(str(out_prefix) + ".nwk")}

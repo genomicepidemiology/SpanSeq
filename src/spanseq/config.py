@@ -88,6 +88,10 @@ class SpanSeqConfig:
     ggsearch_path: Optional[Path] = None
     mmseqs_path: Optional[Path] = None
 
+    # Tree
+    tree: bool = False
+    tree_method: str = "dnj"  # "dnj", "nj", "upgma"
+
     # Technical
     threads: int = 1
     memory_disk: bool = False
@@ -109,6 +113,13 @@ class SpanSeqConfig:
         # Compute sketch size for mash
         if self.distance_method == "mash" and self.max_length is not None:
             self.sketch_size = compute_sketch_size(self.max_length)
+
+        # Validate tree + mmseqs-fast incompatibility
+        if self.tree and self.distance_method == "mmseqs-fast":
+            raise ValueError(
+                "--tree requires a distance matrix, which mmseqs-fast does not produce. "
+                "Use a different distance method (e.g. -d cosine, -d mmseqs2)."
+            )
 
     @property
     def distance_tool(self) -> str:
@@ -198,6 +209,8 @@ class SpanSeqConfig:
             hd = getattr(args, "hobohm1_distance", None)
             kwargs["hobohm1_distance"] = float(hd) if hd else None
             kwargs["hobohm1_method"] = getattr(args, "hobohm1_method", "cdhit")
+            kwargs["tree"] = getattr(args, "tree", False)
+            kwargs["tree_method"] = getattr(args, "tree_method", "dnj")
 
         # Imbalance file
         imb = getattr(args, "makespanImbalanced", None)

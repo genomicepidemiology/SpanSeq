@@ -146,6 +146,15 @@ def build_parser() -> argparse.ArgumentParser:
         "-H", "--memory_disk", action="store_true",
         help="Allocate distance matrix on disk",
     )
+    split_grp.add_argument(
+        "--tree", action="store_true", default=False,
+        help="Build a Newick tree from the distance matrix (incompatible with mmseqs-fast)",
+    )
+    split_grp.add_argument(
+        "--tree_method", default="dnj",
+        choices=["dnj", "nj", "upgma"],
+        help="Tree construction method (default: dnj)",
+    )
 
     # ── Reduce subcommand ─────────────────────────────────────────
     subparsers.add_parser(

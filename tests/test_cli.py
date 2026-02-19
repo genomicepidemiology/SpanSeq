@@ -55,6 +55,37 @@ class TestSplitParsing:
         assert args.GGSearchPath == "/usr/bin/ggsearch36"
 
 
+class TestTreeParsing:
+    def test_tree_flag(self, parser):
+        args = parser.parse_args([
+            "split", "-i", "x.fsa", "-s", "nucleotides",
+            "-o", "out/", "-c", "0.3", "-b", "3", "--tree",
+        ])
+        assert args.tree is True
+
+    def test_tree_default_off(self, parser):
+        args = parser.parse_args([
+            "split", "-i", "x.fsa", "-s", "nucleotides",
+            "-o", "out/", "-c", "0.3", "-b", "3",
+        ])
+        assert args.tree is False
+
+    def test_tree_method(self, parser):
+        args = parser.parse_args([
+            "split", "-i", "x.fsa", "-s", "nucleotides",
+            "-o", "out/", "-c", "0.3", "-b", "3",
+            "--tree", "--tree_method", "nj",
+        ])
+        assert args.tree_method == "nj"
+
+    def test_tree_method_default(self, parser):
+        args = parser.parse_args([
+            "split", "-i", "x.fsa", "-s", "nucleotides",
+            "-o", "out/", "-c", "0.3", "-b", "3",
+        ])
+        assert args.tree_method == "dnj"
+
+
 class TestReduceParsing:
     def test_minimal_reduce(self, parser):
         args = parser.parse_args([
