@@ -101,6 +101,12 @@ class CCPhyloMakespanApp(ApplicationRunner):
             class_columns: Class columns for imbalance-aware partitioning (-c).
             extra_args: Additional CLI arguments.
         """
+        # ccphylo -l accepts an integer (equal bins) or comma-separated weights
+        if isinstance(machines, list):
+            load_str = ",".join(str(x) for x in machines)
+        else:
+            load_str = str(machines)
+
         cmd = [
             str(self.exec_path), "makespan",
             "-i", str(input_file),
@@ -108,7 +114,7 @@ class CCPhyloMakespanApp(ApplicationRunner):
             "-k", str(field_cluster),
             "-m", str(method),
             "-w", str(weight_method),
-            "-l", str(machines),
+            "-l", load_str,
         ]
 
         if class_columns is not None:

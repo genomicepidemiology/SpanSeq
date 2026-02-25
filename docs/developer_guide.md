@@ -216,6 +216,9 @@ Create `tests/applications/test_diamond.py` following the pattern in existing te
 ### Running tests
 
 ```bash
+# cgecore v3 is not yet on PyPI — install from the development branch first
+pip install git+https://bitbucket.org/genomicepidemiology/cgecore.git@v3_dev
+
 pip install -e ".[test]"
 pytest -v
 ```

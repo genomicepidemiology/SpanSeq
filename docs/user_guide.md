@@ -126,6 +126,9 @@ conda env create -n spanseq --file data/envs/spanseqenv.yml
 # Activate the environment
 conda activate spanseq
 
+# cgecore v3 is not yet on PyPI — install directly from the development branch
+pip install git+https://bitbucket.org/genomicepidemiology/cgecore.git@v3_dev
+
 # Install SpanSeq itself
 pip install -e .
 ```
@@ -156,6 +159,7 @@ To update to the latest version:
 ```bash
 cd SpanSeq
 git pull
+pip install git+https://bitbucket.org/genomicepidemiology/cgecore.git@v3_dev
 pip install -e .
 ```
 

@@ -19,15 +19,38 @@ class OutputMixin:
     def _merge_tables(
         self, clusters_file: Path, makespan_file: Path, output_file: Path
     ) -> Path:
-        """Merge cluster and makespan tables into a single partition table."""
+        """Merge cluster and makespan tables into a single partition table.
+
+        clusters TSV:  #Sample, Neighbors, Cluster   (sequence → cluster)
+        makespan TSV:  #Cluster, Cluster_size, Cluster_weight, Partition
+        output TSV:    id, cluster, partition         (sequence → partition)
+        """
         import pandas as pd
+        import io
 
-        clusters = pd.read_csv(clusters_file, sep="\t")
-        makespan = pd.read_csv(makespan_file, sep="\t")
+        def _read(path: Path) -> pd.DataFrame:
+            """Read a ccphylo TSV, skipping ## metadata comment lines."""
+            with open(path) as f:
+                content = "".join(line for line in f if not line.startswith("##"))
+            return pd.read_csv(io.StringIO(content), sep="\t")
 
-        # Merge on sample name column
-        merged = pd.merge(clusters, makespan, on="#Sample", how="left")
-        merged.to_csv(output_file, sep="\t", index=False)
+        clusters = _read(clusters_file)   # columns: #Sample, Neighbors, Cluster
+        makespan = _read(makespan_file)   # columns: #Cluster, Cluster_size, Cluster_weight, Partition
+
+        # Join on cluster ID: clusters.Cluster == makespan.#Cluster
+        merged = pd.merge(
+            clusters[["#Sample", "Cluster"]],
+            makespan[["#Cluster", "Partition"]],
+            left_on="Cluster",
+            right_on="#Cluster",
+            how="left",
+        )
+        merged = merged.rename(columns={
+            "#Sample": "id",
+            "Cluster": "cluster",
+            "Partition": "partition",
+        })
+        merged[["id", "cluster", "partition"]].to_csv(output_file, sep="\t", index=False)
 
         logger.info("Merged table: %s", output_file)
         return output_file
@@ -72,9 +95,15 @@ class OutputMixin:
     def _add_class_columns(self, clusters_file: Path, output_file: Path) -> Path:
         """Add class columns from imbalance file to cluster table."""
         import pandas as pd
+        import io
 
         cfg = self.config
-        clusters = pd.read_csv(clusters_file, sep="\t")
+
+        # Skip ## metadata comment lines produced by ccphylo
+        with open(clusters_file) as f:
+            content = "".join(line for line in f if not line.startswith("##"))
+        clusters = pd.read_csv(io.StringIO(content), sep="\t")
+
         classes = pd.read_csv(cfg.imbalance_file, sep="\t", header=None)
 
         # Rename class columns
@@ -92,13 +121,6 @@ class OutputMixin:
                 "The imbalance file contains fewer sequences than the cluster table"
             )
 
-        # Preserve header comment from original file
-        with open(clusters_file, "r") as f:
-            header_line = f.readline()
-
-        with open(output_file, "w") as f:
-            if header_line.startswith("#"):
-                f.write(header_line)
-        merged.to_csv(output_file, sep="\t", index=False, mode="a")
+        merged.to_csv(output_file, sep="\t", index=False)
 
         return output_file

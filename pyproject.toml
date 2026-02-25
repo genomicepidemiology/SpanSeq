@@ -40,3 +40,7 @@ where = ["src"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
+addopts = "--ignore=tests/integration"
+markers = [
+    "integration: tests that call real tools (kma, ccphylo, etc.) and use real FASTA data",
+]
