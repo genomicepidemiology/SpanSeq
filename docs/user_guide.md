@@ -47,10 +47,10 @@ The `-c` (min_dist) parameter is the **distance threshold**. A value of `0.3` me
 
 | `-c` value | Max cross-bin similarity | Strictness |
 |---|---|---|
-| 0.1 | 90% | Very strict — only very distant sequences can be in different bins |
+| 0.1 | 90% | Very relaxed — allows highly similar sequences across bins |
 | 0.3 | 70% | Moderate — commonly used for gene-level analyses |
-| 0.5 | 50% | Relaxed — sequences must be less than half identical |
-| 0.7 | 30% | Very relaxed — allows moderately related sequences across bins |
+| 0.5 | 50% | Strict — sequences must share less than 50% identity to be split |
+| 0.7 | 30% | Very strict — only very distant sequences can be in different bins |
 
 **Higher `-c` = stricter partitioning = fewer, larger clusters = less balanced bins.**
 
@@ -381,7 +381,7 @@ The distance method (`-d` flag) determines how SpanSeq measures similarity betwe
 
 This is the most important parameter. It controls how strict the partitioning is.
 
-`-c 0.3` means: "the maximum allowed distance between sequences in different bins is 0.3." Since distance = 1 - similarity, this is equivalent to saying "sequences in different bins share at most 70% similarity."
+`-c 0.3` means: "the minimum distance between sequences in different bins is 0.3." Since distance = 1 - similarity, this is equivalent to saying "sequences in different bins share at most 70% similarity."
 
 **How to choose a good threshold:**
 
@@ -493,29 +493,26 @@ gene_006   1            2
 | Column | Meaning |
 |---|---|
 | `#Sample` | Sequence name (from the FASTA header) |
-| `Neighbors` | Number of sequences in this cluster |
-| `Cluster` | Cluster ID (sequences in the same cluster are similar) |
+| `Neighbors` | Number of other sequences within the distance threshold of this sequence (DBSCAN local density) |
+| `Cluster` | Cluster ID (sequences in the same cluster are too similar to be split across bins) |
 
 ### Makespan file (`<sample>_makespan.tsv`)
 
-Tab-separated file with the final bin assignment:
+Tab-separated file with one row per cluster and its bin assignment:
 
 ```
-#Sample    Machine
-gene_001   1
-gene_002   1
-gene_003   1
-gene_004   2
-gene_005   2
-gene_006   3
+#Cluster    Cluster_size    Cluster_weight    Partition
+0           3               3.0               1
+1           2               2.0               2
+2           1               1.0               3
 ```
 
 | Column | Meaning |
 |---|---|
-| `#Sample` | Sequence name |
-| `Machine` | Bin number (1-indexed) |
-
-This is the file you use to create your training/validation/test splits.
+| `#Cluster` | Cluster ID (matches `Cluster` in the clusters file) |
+| `Cluster_size` | Number of sequences in this cluster |
+| `Cluster_weight` | Weight used by the makespan algorithm (based on `--makespanWeights`) |
+| `Partition` | Bin assignment (1-indexed) |
 
 ### Statistics file (`<sample>_makespan_stats.tsv`)
 
@@ -523,14 +520,23 @@ Summary statistics about the partitioning. Shows how many sequences ended up in 
 
 ### Partitions file (`<sample>_partitions.tsv`, with `-f merged_table`)
 
-A merged table combining the cluster and makespan information:
+A merged sequence-level table combining cluster and bin information. This is the file you use to create your training/validation/test splits:
 
 ```
-#Sample    Neighbors    Cluster    Machine
-gene_001   5            0          1
-gene_002   5            0          1
-...
+id          cluster    partition
+gene_001    0          1
+gene_002    0          1
+gene_003    0          1
+gene_004    1          2
+gene_005    1          2
+gene_006    2          3
 ```
+
+| Column | Meaning |
+|---|---|
+| `id` | Sequence name |
+| `cluster` | Cluster ID |
+| `partition` | Bin assignment (1-indexed) |
 
 ### Per-bin FASTA files (`<sample>_M1.fsa`, etc., with `-f fasta_files`)
 
